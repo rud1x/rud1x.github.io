@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rudix | Портфолио</title>
+    <link rel="icon" type="image/x-icon" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Подключаем Phosphor Icons сразу в head -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.2"></script>
+
+</div>
+</head>
+<body>
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="go-button" id="goButton">
+                <div class="go-ring"></div>
+                <div class="go-ring-inner"></div>
+                <span class="go-text">GO</span>
+            </div>
+            <p class="loading-hint">click to enter</p>
+        </div>
+    </div>
+    <!-- Canvas для анимированного фона -->
+    <canvas id="bgCanvas"></canvas>
+    <div class="container">
+
+        <!-- Главный блок + Обо мне -->
+        <section id="home" class="hero-about">
+            <div class="hero-about-wrapper">
+                <!-- Левая колонка - фото -->
+                <div class="hero-about-photo">
+                    <div class="photo-frame">
+                        <img src="https://i.ibb.co/TD8NPThf/dc-SZn.jpg" alt="Фото" id="profilePhoto">
+                    </div>
+                </div>
+
+                <div class="hero-about-content">
+                    <div class="greeting">
+                        <i class="ph-fill ph-hand-waving greeting-icon"></i>
+                        <h1>Привет, я <span class="highlight">Михаил</span></h1>
+                    </div>
+
+                    <p class="hero-description">
+                        Мне <strong id="age"></strong> лет, с <strong>2023</strong> года создаю <strong>telegram</strong> и <strong>discord</strong> ботов. Специализируюсь на <strong>бекэнд-разработке</strong>, дизайне и оптимизации производительности.
+                    </p>
+
+                    <!-- КОМПАКТНАЯ СЕТКА НАВЫКОВ -->
+                    <div class="skills-compact-grid">
+                        <div class="skill-compact-item">
+                            <i class="ph-fill ph-code"></i>
+                            <span>Веб-разработка</span>
+                        </div>
+                        <div class="skill-compact-item">
+                            <i class="ph-fill ph-palette"></i>
+                            <span>UI/UX Дизайн</span>
+                        </div>
+                        <div class="skill-compact-item">
+                            <i class="ph-fill ph-gauge"></i>
+                            <span>Оптимизация</span>
+                        </div>
+                        <div class="skill-compact-item">
+                            <i class="ph-fill ph-users"></i>
+                            <span>Управление</span>
+                        </div>
+                        <div class="skill-compact-item">
+                            <i class="ph-fill ph-chart-line"></i>
+                            <span>Аналитика</span>
+                        </div>
+                        <div class="skill-compact-item">
+                            <i class="ph-fill ph-video"></i>
+                            <span>Видеомонтаж</span>
+                        </div>
+                    </div>
+
+                    <!-- Кнопка "Связаться" -->
+                    <div class="contact-wrapper">
+                        <button id="heroContactBtn" class="btn btn-large">
+                            <i class="ph-fill ph-chat-teardrop-dots"></i>
+                            Связаться со мной
+                        </button>
+                        <div id="heroContactDropdown" class="dropdown">
+                            <a href="https://t.me/therudix" target="_blank">
+                                <i class="ph-fill ph-telegram-logo"></i> Telegram
+                            </a>
+                            <a href="mailto:timipav@yandex.ru">
+                                <i class="ph-fill ph-envelope"></i> Email
+                            </a>
+                            <a href="https://github.com/rud1x" target="_blank">
+                                <i class="ph-fill ph-github-logo"></i> GitHub
+                            </a>
+                            <a href="https://steamcommunity.com/id/rudix_001/" target="_blank">
+                                <i class="ph-fill ph-steam-logo"></i> Steam
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Навыки (Табы) -->
+        <section id="skills" class="skills">
+            <h2>Навыки и инструменты</h2>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="skills-tab">Навыки</button>
+                <button class="tab-btn" data-tab="tools-tab">Инструменты</button>
+            </div>
+            
+            <!-- Таб НАВЫКИ -->
+            <div id="skills-tab" class="tab-content active">
+                <div class="skills-grid">
+                    <div class="skill-card" data-skill="python">Python</div>
+                    <div class="skill-card" data-skill="linux">Linux/Debian</div>
+                    <div class="skill-card" data-skill="telegram">Telegram API</div>
+                    <div class="skill-card" data-skill="prompt">Промт-инжиниринг</div>
+                    <div class="skill-card" data-skill="git">Git</div>
+                    <div class="skill-card" data-skill="html">HTML/CSS</div>
+                    <div class="skill-card" data-skill="sql">Базы данных (SQLite)</div>
+                    <div class="skill-card" data-skill="english">Английский язык</div>
+                    <div class="skill-card" data-skill="analytics">Аналитика</div>
+                </div>
+            </div>
+            
+            <!-- Таб ИНСТРУМЕНТЫ -->
+            <div id="tools-tab" class="tab-content">
+                <div class="skills-grid">
+                    <div class="skill-card" data-tool="vscode">VS Code</div>
+                    <div class="skill-card" data-tool="github">GitHub</div>
+                    <div class="skill-card" data-tool="terminal">Terminal</div>
+                    <div class="skill-card" data-tool="funpay">FunPay</div>
+                    <div class="skill-card" data-tool="asf">ASF</div>
+                    <div class="skill-card" data-tool="nfc">Arch Linux</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Проекты с фильтрацией -->
+        <section id="projects" class="projects">
+            <h2>Проекты</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn" data-filter="discord">Discord</button>
+                <button class="filter-btn" data-filter="telegram">Telegram</button>
+                <button class="filter-btn" data-filter="code">Open Source</button>
+            </div>
+            <div class="projects-grid" id="projectsGrid">
+            </div>
+        </section>
+        <!-- ВРЕМЕННАЯ ШКАЛА КАРЬЕРЫ -->
+        <section id="timeline" class="timeline-section">
+            <h2 class="section-title">Моя карьера</h2>
+            <p class="timeline-subtitle">Ключевые моменты моего пути в разработке</p>
+            
+            <div class="timeline-container">
+                <button class="timeline-arrow left" id="timelineLeft">
+                    <i class="ph-fill ph-caret-left"></i>
+                </button>
+                
+                <div class="timeline-viewport">
+                    <div class="timeline-cards" id="timelineCards">
+                        <!-- Карточка 1 -->
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="ph-fill ph-rocket"></i>
+                            </div>
+                            <div class="timeline-year">2019</div>
+                            <h3 class="timeline-name">Начало пути</h3>
+                            <p class="timeline-text">Сверстал первый сайт для своих видео в 7 лет</p>
+                            <div class="timeline-tags-list">
+                                <span class="timeline-tag">Html5</span>
+                                <span class="timeline-tag">CSS3</span>
+                            </div>
+                        </div>
+
+                        <!-- Карточка 2 -->
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="ph-fill ph-discord-logo"></i>
+                            </div>
+                            <div class="timeline-year">2023</div>
+                            <h3 class="timeline-name">Discord разработка</h3>
+                            <p class="timeline-text">Создание простых Discord ботов на Python</p>
+                            <div class="timeline-tags-list">
+                                <span class="timeline-tag">Python</span>
+                            </div>
+                        </div>
+
+                        <!-- Карточка 3 -->
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="ph-fill ph-game-controller"></i>
+                            </div>
+                            <div class="timeline-year">2024</div>
+                            <h3 class="timeline-name">Серийчик Бот</h3>
+                            <p class="timeline-text">Запуск игрового Telegram бота с экономикой и системой уровней</p>
+                            <div class="timeline-tags-list">
+                                <span class="timeline-tag">aiogram</span>
+                                <span class="timeline-tag">Python</span>
+                            </div>
+                        </div>
+
+                        <!-- Карточка 4 -->
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="ph-fill ph-github-logo"></i>
+                            </div>
+                            <div class="timeline-year">2024</div>
+                            <h3 class="timeline-name">Open Source</h3>
+                            <p class="timeline-text">Первый Open Source проект — HuroBot для автоматизации и OSINT</p>
+                            <div class="timeline-tags-list">
+                                <span class="timeline-tag">GitHub</span>
+                                <span class="timeline-tag">OSINT</span>
+                            </div>
+                        </div>
+
+                        <!-- Карточка 5 -->
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="ph-fill ph-compass"></i>
+                            </div>
+                            <div class="timeline-year">2026</div>
+                            <h3 class="timeline-name">Новые горизонты</h3>
+                            <p class="timeline-text">Создание uHunt, wexos и начало профисионального обучения програмированию</p>
+                            <div class="timeline-tags-list">
+                                <span class="timeline-tag">Frontend</span>
+                                <span class="timeline-tag">Userbot</span>
+                            </div>
+                        </div>
+
+                        <!-- Карточка 7 -->
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="ph-fill ph-star"></i>
+                            </div>
+                            <div class="timeline-year">2026+</div>
+                            <h3 class="timeline-name">Цели и мечты</h3>
+                            <p class="timeline-text">Изучение Java, создание стартапа, вклад в Open Source</p>
+                            <div class="timeline-tags-list">
+                                <span class="timeline-tag">Java</span>
+                                <span class="timeline-tag">Стартап</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="timeline-arrow right" id="timelineRight">
+                    <i class="ph-fill ph-caret-right"></i>
+                </button>
+            </div>
+
+            <div class="timeline-footer">
+                <div class="timeline-progress-line">
+                    <div class="timeline-progress-fill" id="timelineProgressFill"></div>
+                </div>
+                <div class="timeline-counter-display">
+                    <span id="timelineCurrentSlide">1</span> / <span id="timelineTotalSlides">7</span>
+                </div>
+            </div>
+        </section>
+        <!-- GitHub статистика из JSON -->
+        <div class="github-stats-container">
+            <h3 class="stats-title">
+                <i class="ph-fill ph-github-logo"></i>
+                GitHub Статистика
+            </h3>
+            <div class="github-stats-grid" id="githubStatsGrid">
+                <div class="stat-skeleton"><div class="skeleton-shimmer"></div></div>
+                <div class="stat-skeleton"><div class="skeleton-shimmer"></div></div>
+                <div class="stat-skeleton"><div class="skeleton-shimmer"></div></div>
+                <div class="stat-skeleton"><div class="skeleton-shimmer"></div></div>
+                <div class="stat-skeleton"><div class="skeleton-shimmer"></div></div>
+                <div class="stat-skeleton"><div class="skeleton-shimmer"></div></div>
+            </div>            
+            <!-- Кнопка на GitHub -->
+            <div class="github-button-wrapper">
+                <a href="https://github.com/rud1x" target="_blank" class="github-profile-btn">
+                    <i class="ph-fill ph-github-logo"></i>
+                    Перейти на GitHub
+                </a>
+            </div>            
+            <div class="stats-update-info" id="statsUpdateInfo"></div>
+        </div>
+        <!-- Codewars статистика -->
+        <div class="codewars-stats-container">
+            <h3 class="stats-title">
+                <i class="ph-fill ph-code"></i>
+                    Codewars Статистика
+                </h3>
+                <div id="codewars-stats">
+                    <div class="stat-skeleton"><div class="skeleton-shimmer"></div></div>
+                </div>
+            </div>
+        </div>
+        <!-- Подвал -->
+        <footer class="site-footer">
+            <div class="footer-container">
+                <div class="footer-links">
+                    <a href="https://t.me/therudix" target="_blank" class="footer-link">
+                        <i class="ph-fill ph-telegram-logo"></i>
+                        <span>Telegram</span>
+                    </a>
+                    <span class="footer-separator">|</span>
+                    <a href="https://github.com/rud1x" target="_blank" class="footer-link">
+                        <i class="ph-fill ph-github-logo"></i>
+                        <span>GitHub</span>
+                    </a>
+                    <span class="footer-separator">|</span>
+                    <a href="mailto:rudix@example.com" class="footer-link">
+                        <i class="ph-fill ph-envelope"></i>
+                        <span>Email</span>
+                    </a>
+                    <span class="footer-separator">|</span>
+                    <a href="https://steamcommunity.com/id/rudix_001/" target="_blank" class="footer-link">
+                        <i class="ph-fill ph-steam-logo"></i>
+                        <span>Steam</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="danger-zone">
+            <button id="delete-btn" class="delete-site-btn">Delete this site</button>
+            </div>
+
+            <div id="confirm-overlay" class="confirm-overlay hidden">
+                <div class="confirm-box">
+                    <h2 id="confirm-text">Вы уверены?</h2>
+                    <div class="confirm-btns">
+                        <button id="confirm-yes">Да</button>
+                        <button id="confirm-no">Нет, назад!</button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    
+
+    <!-- Модальное окно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
