@@ -37,7 +37,7 @@ function slugify(str) {
 
 async function getPostFiles() {
     try {
-        const response = await fetch('posts/list.txt?_=' + Date.now());
+        const response = await fetch('/blog/posts/list.txt?_=' + Date.now());
         if (!response.ok) throw new Error('list.txt not found');
         const text = await response.text();
         return text.split('\n')
@@ -104,7 +104,7 @@ function parseFrontMatter(mdContent) {
 
 async function loadPost(filename) {
     try {
-        const response = await fetch(`posts/${filename}?_=${Date.now()}`);
+        const response = await fetch(`/blog/posts/${filename}?_=${Date.now()}`);
         if (!response.ok) throw new Error(`Failed to load ${filename}`);
         const mdContent = await response.text();
         const { metadata, content } = parseFrontMatter(mdContent);
