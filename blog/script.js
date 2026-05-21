@@ -120,6 +120,7 @@ async function loadPost(filename) {
         let title = metadata.title || filename.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.txt$/, '').replace(/-/g, ' ');
         let excerpt = metadata.excerpt || "Нажмите, чтобы прочитать статью...";
         let category = metadata.category || "dev";
+        const slug = slugify(title);
         
         return { id: filename, slug, title, excerpt, category, date: displayDate, rawDate: date, content };
     } catch (error) {
