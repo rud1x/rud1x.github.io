@@ -1,11 +1,11 @@
-/* RESET & BASE */
+ 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* CSS переменные */
+ 
 :root {
     --bg: #0a0a0a;
     --fg: #111111;
@@ -41,7 +41,7 @@ body {
     transition: background 0.3s, color 0.3s;
 }
 
-/* СЕТКА НА ФОНЕ */
+ 
 .grid-bg {
     position: fixed;
     top: 0;
@@ -58,7 +58,7 @@ body {
     mask-image: linear-gradient(to bottom, white 0%, white 70%, transparent 100%);
 }
 
-/* CANVAS (анимированная сетка, опционально) */
+ 
 #bgCanvas {
     position: fixed;
     top: 0;
@@ -83,7 +83,7 @@ body.light #bgCanvas {
     z-index: 1;
 }
 
-/* HERO */
+ 
 .hero {
     min-height: 80vh;
     display: flex;
@@ -134,7 +134,7 @@ body.light #bgCanvas {
     50% { opacity: 0; }
 }
 
-/* SOCIAL */
+ 
 .social-links {
     display: flex;
     justify-content: center;
@@ -153,7 +153,7 @@ body.light #bgCanvas {
     transform: translateY(-3px);
 }
 
-/* BUTTONS */
+ 
 .action-buttons {
     display: flex;
     justify-content: center;
@@ -198,7 +198,7 @@ body.light #bgCanvas {
     transform: translateY(-2px);
 }
 
-/* CONTACT DROPDOWN */
+ 
 .contact-dropdown {
     display: none;
     justify-content: center;
@@ -233,7 +233,7 @@ body.light #bgCanvas {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* THEME SWITCH */
+ 
 .theme-switch {
     display: flex;
     justify-content: center;
@@ -263,7 +263,7 @@ body.light #bgCanvas {
     color: var(--bg);
 }
 
-/* SECTIONS */
+ 
 section {
     margin: 4rem 0;
     display: flex;
@@ -306,7 +306,7 @@ section {
     flex: 1;
 }
 
-/* ABOUT */
+ 
 .about-text {
     color: var(--gray);
     line-height: 1.8;
@@ -351,7 +351,7 @@ section {
     font-weight: 500;
 }
 
-/* SKILLS */
+ 
 .tabs {
     display: flex;
     gap: 1rem;
@@ -421,7 +421,7 @@ section {
     font-weight: 500;
 }
 
-/* TIMELINE */
+ 
 .timeline {
     display: flex;
     flex-direction: column;
@@ -475,7 +475,7 @@ section {
     color: var(--gray);
 }
 
-/* ========== ПРОЕКТЫ - ИСПРАВЛЕННАЯ СЕТКА ========== */
+ 
 .projects {
     margin: 4rem 0;
 }
@@ -511,7 +511,7 @@ section {
     color: var(--bg);
 }
 
-/* ГЛАВНОЕ ИСПРАВЛЕНИЕ: projects-grid — СЕТКА, а не flex-колонка */
+ 
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -606,7 +606,7 @@ section {
     grid-column: 1 / -1;
 }
 
-/* Мобильная адаптация */
+ 
 @media (max-width: 768px) {
     .projects-grid {
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -624,7 +624,7 @@ section {
     }
 }
 
-/* GITHUB STATS */
+ 
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -683,7 +683,7 @@ section {
     transform: translateY(-2px);
 }
 
-/* FOOTER */
+ 
 .footer {
     margin-top: 5rem;
     padding: 2rem 0;
@@ -726,7 +726,7 @@ section {
     font-size: 0.7rem;
 }
 
-/* ОБЩАЯ АДАПТИВНОСТЬ */
+ 
 @media (max-width: 768px) {
     .container {
         padding: 0 1.5rem;
@@ -813,12 +813,12 @@ section {
     color: var(--bg);
 }
 
-/* Плавное появление карточек при скролле (не ломает сетку) */
+ 
 .project-card {
     transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s ease;
 }
 
-/* Мобильная адаптация */
+ 
 @media (max-width: 768px) {
     .back-to-top {
         bottom: 20px;
@@ -829,7 +829,7 @@ section {
     }
 }
 
-/* ========== КНОПКА НАВЕРХ ========== */
+ 
 .back-to-top {
     position: fixed;
     bottom: 30px;
@@ -874,7 +874,7 @@ section {
     }
 }
 
-/* КНОПКА ТЕМЫ В УГЛУ */
+ 
 .corner-theme-btn {
     position: fixed;
     top: 20px;
@@ -909,7 +909,7 @@ section {
         font-size: 1.2rem;
     }
 }
-/* ========== ЛИПКИЙ ЗАГОЛОВОК ДЛЯ ТЕЛЕФОНОВ (КОМПАКТНЫЙ) ========== */
+ 
 @media (max-width: 768px) {
     .section-header {
         position: sticky;
@@ -935,17 +935,17 @@ section {
         font-size: 0.8rem !important;
     }
     
-    /* Чтобы контент не заезжал под заголовок */
+     
     .section-content {
         scroll-margin-top: 40px;
     }
     
-    /* Плавный скролл */
+     
     html {
         scroll-behavior: smooth;
     }
 }
-/* SECTIONS - КОМПАКТНЫЕ ЗАГОЛОВКИ */
+ 
 section {
     margin: 1.5rem 0;
     display: flex;
@@ -1007,7 +1007,7 @@ section {
     }
 }
 
-/* ========== СЕТКА НАВЫКОВ - 3 КОЛОНКИ ========== */
+ 
 .skills-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1045,7 +1045,7 @@ section {
     text-overflow: ellipsis;
 }
 
-/* Планшеты - 2 колонки */
+ 
 @media (max-width: 900px) {
     .skills-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1053,7 +1053,7 @@ section {
     }
 }
 
-/* Телефоны - 1 колонка */
+ 
 @media (max-width: 560px) {
     .skills-grid {
         grid-template-columns: 1fr;
@@ -1074,7 +1074,7 @@ section {
 }
 
 
-/* ========== БАЗОВЫЕ СТИЛИ ДЛЯ CODEWARS (ДЕСКТОП) ========== */
+ 
 .codewars .stats-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -1115,27 +1115,27 @@ section {
     gap: 0.5rem;
 }
 
-/* Десктопные стили (поверх мобильных) */
+ 
 @media (min-width: 769px) {
     .codewars .stats-grid {
         grid-template-columns: repeat(2, 1fr) !important;
     }
 }
 
-/* Мобильные стили */
+ 
 @media (max-width: 768px) {
     .codewars .stats-grid {
         grid-template-columns: 1fr !important;
         gap: 0.8rem;
     }
 }
-/* ========== УВЕЛИЧЕНИЕ ОТСТУПОВ МЕЖДУ БЛОКАМИ ========== */
+ 
 section {
     margin-bottom: 6rem !important;
     margin-top: 6rem !important;
 }
 
-/* Для мобильных устройств - чуть меньше */
+ 
 @media (max-width: 768px) {
     section {
         margin-bottom: 4rem !important;
@@ -1143,16 +1143,29 @@ section {
     }
 }
 
-/* Дополнительный отступ перед футером */
+ 
 .footer {
     margin-top: 6rem !important;
 }
 
-/* Отступы между GitHub и Codewars */
+ 
 .github {
     margin-bottom: 4rem !important;
 }
 
 .codewars {
     margin-top: 2rem !important;
+}
+
+.about-blog-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px dashed var(--accent);
+    transition: all 0.2s;
+}
+
+.about-blog-link:hover {
+    color: var(--pg);
+    border-bottom-color: var(--pg);
 }

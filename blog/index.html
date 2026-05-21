@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>rudix | Блог разработчика</title>
+    <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231f2937'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='20' font-family='monospace'%3ER%3C/text%3E%3C/svg%3E">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <link rel="icon" type="image/svg+xml" href="book.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <canvas id="bgCanvas"></canvas>
+    <div class="container">
+
+
+        <div id="heroSection" class="blog-hero-new">
+            <div class="hero-badge">rudix</div>
+            <h1 class="hero-title-new">
+                Записки<br>
+                <span class="gradient-text">разработчика</span>
+            </h1>
+            <p class="hero-description">Делюсь опытом, инсайтами и историями из мира кода, ботов и open source</p>
+        </div>
+        <div class="portfolio-link">
+            <a href="/" class="portfolio-btn">
+                <i class="ph-fill ph-code"></i>
+                <span>Портфолио</span>
+            </a>
+            <a href="https://github.com/rud1x" target="_blank" class="portfolio-btn github-btn">
+                <i class="ph-fill ph-github-logo"></i>
+                <span>GitHub</span>
+            </a>
+        </div>
+        <div id="searchSection" class="search-wrapper">
+            <div class="search-container">
+                <i class="ph-fill ph-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Поиск по статьям...">
+            </div>
+        </div>
+
+        <div id="loadingIndicator" class="loading-indicator">
+            <div class="loading-spinner"></div>
+            <span>Загрузка статей...</span>
+        </div>
+        
+        <div id="blogMainContent">
+            <div id="postsGrid" class="blog-grid"></div>
+            <div class="pagination" id="paginationControls"></div>
+        </div>
+    </div>
+
+
+    <div id="postDetail" style="display: none;">
+        <div class="container">
+            <div class="post-detail-container">
+                <button id="backToBlogBtn" class="back-button">← Назад ко всем записям</button>
+                <article class="post-article">
+                    <h1 id="postDetailTitle"></h1>
+                    <div class="post-detail-meta">
+                        <span id="postDetailDate"></span>
+                        <span id="postDetailCategory" class="post-category"></span>
+                    </div>
+                    <div id="postDetailContent" class="post-content-markdown"></div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://t.me/therudix" target="_blank" class="footer-link"><i class="ph-fill ph-telegram-logo"></i> Telegram</a>
+                <a href="https://github.com/rud1x" target="_blank" class="footer-link"><i class="ph-fill ph-github-logo"></i> GitHub</a>
+            </div>
+        </div>
+    </footer>
+    <button id="cornerThemeBtn" class="corner-theme-btn" aria-label="Тема">
+        <i class="ph-fill ph-moon"></i>
+    </button>
+    <script src="script.js"></script>
+</body>
+</html>

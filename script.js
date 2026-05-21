@@ -1,4 +1,3 @@
-// CANVAS АНИМАЦИЯ
 (function initGridBackground() {
     const canvas = document.getElementById('bgCanvas');
     if (!canvas) return;
@@ -39,7 +38,6 @@
     drawGrid();
 })();
 
-// ВОЗРАСТ
 function calculateAge(birthDate) {
     const today = new Date();
     const birth = new Date(birthDate);
@@ -51,7 +49,6 @@ function calculateAge(birthDate) {
 const ageElement = document.getElementById('age');
 if (ageElement) ageElement.textContent = calculateAge('2012-02-10');
 
-// ========== ДАННЫЕ ПРОЕКТОВ ==========
 const projectsData = [
     {
         id: 2,
@@ -127,7 +124,6 @@ const projectsData = [
     }
 ];
 
-// Функция для категорий
 function getCategoryName(category) {
     const names = {
         'discord': 'Discord',
@@ -137,7 +133,6 @@ function getCategoryName(category) {
     return names[category] || category;
 }
 
-// Функция рендера проектов - ИСПРАВЛЕННАЯ (чистые картинки без мусора)
 function renderProjects(filter = 'all') {
     const grid = document.getElementById('projectsGrid');
     if (!grid) {
@@ -207,7 +202,6 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
-// ФИЛЬТРАЦИЯ
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const filter = btn.dataset.filter;
@@ -217,7 +211,6 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
     });
 });
 
-// ТАБЫ НАВЫКОВ
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
@@ -228,7 +221,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
-// GITHUB СТАТИСТИКА
 async function loadGitHubStats() {
     const grid = document.getElementById('githubStatsGrid');
     if (!grid) return;
@@ -250,7 +242,6 @@ async function loadGitHubStats() {
     }
 }
 
-// ========== CODEWARS СТАТИСТИКА ==========
 async function loadCodewarsStats() {
     const grid = document.getElementById('codewarsStatsGrid');
     if (!grid) return;
@@ -262,7 +253,6 @@ async function loadCodewarsStats() {
         
         const data = await response.json();
         
-        // Цвета для рангов
         const rankColors = {
             'white': '#cccccc',
             'yellow': '#ffcc00',
@@ -272,7 +262,6 @@ async function loadCodewarsStats() {
         };
         const rankColor = rankColors[data.ranks.overall.color] || '#ffffff';
         
-        // Тот же HTML, что и у GitHub
         grid.innerHTML = `
             <div class="stat-card"><div class="stat-value" style="color: ${rankColor}">${data.ranks.overall.name}</div><div class="stat-label">Ранг</div></div>
             <div class="stat-card"><div class="stat-value">${data.honor || 0}</div><div class="stat-label">Очки чести</div></div>
@@ -287,7 +276,6 @@ async function loadCodewarsStats() {
     }
 }
 
-// КНОПКА КОНТАКТОВ
 const contactBtn = document.getElementById('contactBtn');
 const contactDropdown = document.getElementById('contactDropdown');
 if (contactBtn && contactDropdown) {
@@ -302,7 +290,6 @@ if (contactBtn && contactDropdown) {
     });
 }
 
-// ТЕМА
 function setTheme(theme) {
     document.body.classList.remove('dark', 'light');
     document.body.classList.add(theme);
@@ -320,7 +307,6 @@ document.querySelectorAll('.theme-btn').forEach(btn => {
     btn.addEventListener('click', () => setTheme(btn.dataset.theme));
 });
 
-// Анимация появления карточек
 const style = document.createElement('style');
 style.textContent = `
     @keyframes fadeInUp {
@@ -336,15 +322,13 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// ЗАПУСК
 document.addEventListener('DOMContentLoaded', () => {
     renderProjects('all');
     loadGitHubStats();
-    loadCodewarsStats(); // Добавляем загрузку Codewars
+    loadCodewarsStats();
 });
 
 
-// КНОПКА НАВЕРХ
 const backToTopBtn = document.getElementById('backToTop');
 
 if (backToTopBtn) {
@@ -364,7 +348,6 @@ if (backToTopBtn) {
     });
 }
 
-// ========== ПЛАВНОЕ ПОЯВЛЕНИЕ КАРТОЧЕК ПРИ СКРОЛЛЕ ==========
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '20px'
@@ -380,7 +363,6 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Применяем ко всем карточкам проектов и навыков
 document.querySelectorAll('.project-card, .skill-card, .stat-card, .timeline-item').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
@@ -388,7 +370,6 @@ document.querySelectorAll('.project-card, .skill-card, .stat-card, .timeline-ite
     observer.observe(el);
 });
 
-// Hero-блок тоже плавно появляется
 const heroContent = document.querySelector('.hero-content');
 if (heroContent) {
     heroContent.style.opacity = '0';
@@ -400,7 +381,6 @@ if (heroContent) {
     }, 100);
 }
 
-// ========== КНОПКА ТЕМЫ В УГЛУ (без конфликтов) ==========
 const cornerBtn = document.getElementById('cornerThemeBtn');
 
 function updateCornerBtnIcon() {
@@ -415,20 +395,16 @@ function updateCornerBtnIcon() {
 }
 
 if (cornerBtn) {
-    // Устанавливаем правильную иконку
     updateCornerBtnIcon();
     
-    // Клик по кнопке
     cornerBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         const isDark = document.body.classList.contains('dark');
         const newTheme = isDark ? 'light' : 'dark';
         
-        // Используем существующую функцию setTheme
         setTheme(newTheme);
         updateCornerBtnIcon();
         
-        // Анимация
         this.style.transform = 'scale(0.95)';
         setTimeout(() => {
             if (cornerBtn) cornerBtn.style.transform = '';
@@ -436,29 +412,24 @@ if (cornerBtn) {
     });
 }
 
-// Следим за изменением темы от других кнопок
 const themeObserver = new MutationObserver(function() {
     updateCornerBtnIcon();
 });
 themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
-// ========== АНИМАЦИЯ ПЕЧАТНОЙ МАШИНКИ ==========
 function initTypingAnimation() {
     const heroTitle = document.querySelector('.hero-title');
     if (!heroTitle) return;
     
-    // Сохраняем структуру
     const cursorSpan = heroTitle.querySelector('.cursor');
     if (!cursorSpan) return;
     
-    // Текст для печати
     const firstLineText = "JUNIOR";
     const secondLineText = "DEVELOPER";
     
-    // Очищаем заголовок, сохраняя курсор
     heroTitle.innerHTML = '';
     
-    // Создаём элементы для строк
+
     const firstLineSpan = document.createElement('span');
     firstLineSpan.className = 'typing-line';
     const breakSpan = document.createElement('br');
@@ -479,7 +450,6 @@ function initTypingAnimation() {
             firstIndex++;
             setTimeout(typeFirstLine, 100);
         } else {
-            // После первой строки ждём и печатаем вторую
             setTimeout(typeSecondLine, 200);
         }
     }
@@ -492,11 +462,9 @@ function initTypingAnimation() {
         }
     }
     
-    // Запускаем анимацию
     setTimeout(typeFirstLine, 300);
 }
 
-// Запуск при загрузке
 document.addEventListener('DOMContentLoaded', () => {
     renderProjects('all');
     loadGitHubStats();
@@ -504,8 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(initTypingAnimation, 500);
 });
 
-
-// ========== КОМПАКТНЫЙ ЗАГОЛОВОК (убираем лишнюю высоту) ==========
 function compactStickyHeader() {
     if (window.innerWidth > 768) return;
     
@@ -527,11 +493,16 @@ function compactStickyHeader() {
 document.addEventListener('DOMContentLoaded', compactStickyHeader);
 window.addEventListener('resize', compactStickyHeader);
 
-// КНОПКА РЕЗЮМЕ - ВРЕМЕННО НЕТ
-const resumeBtn = document.querySelector('.btn-secondary');
-if (resumeBtn) {
-    resumeBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('Резюме недоступно. (кнопка на будущее)');
-    });
+function getDaysSince(dateString) {
+    const startDate = new Date(dateString);
+    const today = new Date();
+    const diffTime = Math.abs(today - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+}
+
+const daysElement = document.getElementById('codingDays');
+if (daysElement) {
+    const days = getDaysSince('2026-04-06');
+    daysElement.textContent = days;
 }
