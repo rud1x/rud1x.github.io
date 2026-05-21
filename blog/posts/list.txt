@@ -1,2 +1,2 @@
-2026-05-21-hello-world.md
-2026-05-20-documentation.md
+2026-05-21-hello-world.txt
+2026-05-20-documentation.txt

@@ -42,7 +42,7 @@ async function getPostFiles() {
         const text = await response.text();
         return text.split('\n')
             .map(line => line.trim())
-            .filter(line => line && line.endsWith('.md'));
+            .filter(line => line && line.endsWith('.txt'));
     } catch (error) {
         console.error('Error loading list.txt:', error);
         return [];
@@ -104,7 +104,7 @@ function parseFrontMatter(mdContent) {
 
 async function loadPost(filename) {
     try {
-        const response = await fetch(`/blog/posts/${filename}?_=${Date.now()}`);
+        const response = await fetch(`./posts/${filename}?_=${Date.now()}`);
         if (!response.ok) throw new Error(`Failed to load ${filename}`);
         const mdContent = await response.text();
         const { metadata, content } = parseFrontMatter(mdContent);
@@ -117,7 +117,7 @@ async function loadPost(filename) {
             day: 'numeric', month: 'long', year: 'numeric'
         });
         
-        let title = metadata.title || filename.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '').replace(/-/g, ' ');
+        let title = metadata.title || filename.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.txt$/, '').replace(/-/g, ' ');
         let excerpt = metadata.excerpt || "Нажмите, чтобы прочитать статью...";
         let category = metadata.category || "dev";
         const slug = slugify(title);
