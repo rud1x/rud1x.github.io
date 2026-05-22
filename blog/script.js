@@ -48,14 +48,16 @@ async function getPostFiles() {
         return [];
     }
 }
+
 function parseFrontMatter(mdContent) {
-    let content = mdContent;
+    let content = mdContent.trimStart();
     if (content.charCodeAt(0) === 0xFEFF) {
-        content = content.slice(1);
+        content = content.slice(1).trimStart();
     }
-    const frontMatterMatch = content.match(/^---\s*[\r\n]+([^]*?)[\r\n]+---\s*[\r\n]*/);
+
+    const frontMatterMatch = content.match(/---\s*[\r\n]+([^]*?)[\r\n]+---\s*[\r\n]*/);
     
-    if (!frontMatterMatch) {
+    if (!frontMatterMatch || content.indexOf('---') !== 0) {
         return { metadata: {}, content: mdContent };
     }
     
