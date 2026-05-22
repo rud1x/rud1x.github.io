@@ -40,9 +40,9 @@ async function getPostFiles() {
         const response = await fetch('posts/list.txt?_=' + Date.now());
         if (!response.ok) throw new Error('list.txt not found');
         const text = await response.text();
-        return text.split('\n')
+        return text.split(/\r?\n/)
             .map(line => line.trim())
-            .filter(line => line && line.endsWith('.txt'));
+            .filter(line => line && line.length > 4 && line.endsWith('.txt'));
     } catch (error) {
         console.error('Error loading list.txt:', error);
         return [];
@@ -50,14 +50,12 @@ async function getPostFiles() {
 }
 
 function parseFrontMatter(mdContent) {
-    // 1. Очищаем от BOM и пробелов
-    let content = mdContent.replace(/^\uFEFF/, '').trim();
+    let content = mdContent.replace(/^[\uFEFF\r\n\s]+/, '').trimStart();
 
     if (!content.startsWith('---')) {
         return { metadata: {}, content: mdContent };
     }
 
-    // 2. Бьем по дефисам
     const parts = content.split('---');
     if (parts.length < 3) {
         return { metadata: {}, content: mdContent };
@@ -67,8 +65,6 @@ function parseFrontMatter(mdContent) {
     const articleContent = parts.slice(2).join('---').trim();
 
     const metadata = {};
-
-    // 3. Железобетонный разбор строк: делим по любым переносам (\n или \r\n)
     const lines = yamlText.split(/\r?\n/);
 
     for (let line of lines) {
@@ -80,7 +76,6 @@ function parseFrontMatter(mdContent) {
             const key = line.substring(0, colonIndex).trim().toLowerCase();
             let value = line.substring(colonIndex + 1).trim();
 
-            // Срезаем любые кавычки по краям
             value = value.replace(/^["'`]|["'`]$/g, '').trim();
 
             if (key && value) {
@@ -94,7 +89,9 @@ function parseFrontMatter(mdContent) {
 
 async function loadPost(id) {
     try {
-        let filename = id;
+        if (!id || id.trim() === "") return null;
+
+        let filename = id.trim();
         if (!filename.endsWith('.txt')) {
             filename += '.txt';
         }
@@ -104,14 +101,20 @@ async function loadPost(id) {
         if (!response.ok) {
             throw new Error(`Статус сервера: ${response.status} ${response.statusText}`);
         }
+        
         const mdContent = await response.text();
+        
+        if (mdContent.trim().startsWith('<!DOCTYPE') || mdContent.trim().startsWith('<html')) {
+            throw new Error("Сервер вернул HTML-страницу вместо текстового файла поста.");
+        }
+
         const { metadata, content } = parseFrontMatter(mdContent);
         
         if (!metadata || !metadata.title) {
-            throw new Error("Не удалось распарсить 'title:' в метаданных.");
+            throw new Error("Не удалось найти или распарсить параметр 'title:' в метаданных.");
         }
         
-        const cleanId = id.replace('.txt', '');
+        const cleanId = filename.replace('.txt', '');
         const dateMatch = cleanId.match(/^(\d{4}-\d{2}-\d{2})/);
         let dateStr = dateMatch ? dateMatch[1] : "";
         
@@ -139,21 +142,12 @@ async function loadPost(id) {
         };
     } catch (error) {
         console.error(`[Блог] Ошибка загрузки поста (${id}):`, error.message);
-        
-        return {
-            id: id,
-            title: "⚠️ Статья недоступна",
-            excerpt: `Ошибка: ${error.message}`,
-            category: "error",
-            date: "--.--.----",
-            rawDate: "",
-            content: "Не удалось загрузить содержимое статьи."
-        };
+        return null;
     }
 }
 
 function getCategoryLabel(cat) {
-    const map = { dev: "Разработка", bots: "Боты & API", life: "Инди-мысли", opensource: "Open Source", tutorial: "Туториал", meta: "О блоге" };
+    const map = { dev: "Разработка", bots: "Боты & API", life: "Indie-thoughts", opensource: "Open Source", tutorial: "Туториал", meta: "О блоге" };
     return map[cat] || cat;
 }
 
