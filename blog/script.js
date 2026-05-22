@@ -55,24 +55,31 @@ function parseFrontMatter(mdContent) {
     if (!content.startsWith('---')) {
         return { metadata: {}, content: mdContent };
     }
-    const parts = content.split('---');
-    
-    if (parts.length < 3) {
+
+    const firstDashEnd = 3;
+    const secondDashStart = content.indexOf('---', firstDashEnd);
+
+    if (secondDashStart === -1) {
         return { metadata: {}, content: mdContent };
     }
-
-    const yamlText = parts[1].trim();
-    const articleContent = parts.slice(2).join('---').trim();
+    
+    const yamlText = content.slice(firstDashEnd, secondDashStart).trim();
+    const articleContent = content.slice(secondDashStart + 3).trim();
 
     const metadata = {};
+    const titleMatch = yamlText.match(/title:\s*["']?([^\r\n"']+)/i);
+    const excerptMatch = yamlText.match(/excerpt:\s*["']?([^\r\n"']+)/i);
+    const categoryMatch = yamlText.match(/category:\s*["']?([^\r\n"']+)/i);
 
-    const titleMatch = yamlText.match(/title:\s*["']?([^"'\r\n]+)["']?/);
-    const excerptMatch = yamlText.match(/excerpt:\s*["']?([^"'\r\n]+)["']?/);
-    const categoryMatch = yamlText.match(/category:\s*["']?([^"'\r\n]+)["']?/);
-
-    if (titleMatch && titleMatch[1]) metadata.title = titleMatch[1].trim();
-    if (excerptMatch && excerptMatch[1]) metadata.excerpt = excerptMatch[1].trim();
-    if (categoryMatch && categoryMatch[1]) metadata.category = categoryMatch[1].trim();
+    if (titleMatch && titleMatch[1]) {
+        metadata.title = titleMatch[1].trim();
+    }
+    if (excerptMatch && excerptMatch[1]) {
+        metadata.excerpt = excerptMatch[1].trim();
+    }
+    if (categoryMatch && categoryMatch[1]) {
+        metadata.category = categoryMatch[1].trim();
+    }
 
     return { metadata, content: articleContent };
 }
