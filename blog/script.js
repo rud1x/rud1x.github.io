@@ -48,11 +48,9 @@ async function getPostFiles() {
         return [];
     }
 }
+
 function parseFrontMatter(mdContent) {
-    let content = mdContent.trimStart();
-    if (content.charCodeAt(0) === 0xFEFF) {
-        content = content.slice(1).trimStart();
-    }
+    let content = mdContent.replace(/^\uFEFF/, '').trimStart();
 
     if (!content.startsWith('---')) {
         return { metadata: {}, content: mdContent };
@@ -64,9 +62,9 @@ function parseFrontMatter(mdContent) {
     if (secondDashStart === -1) {
         return { metadata: {}, content: mdContent };
     }
+    
     const yamlText = content.slice(firstDashEnd, secondDashStart).trim();
     const articleContent = content.slice(secondDashStart + 3).trim();
-
 
     const metadata = {};
     const lines = yamlText.split(/\r?\n/);
@@ -100,7 +98,6 @@ async function loadPost(id) {
         if (!response.ok) {
             throw new Error(`Статус сервера: ${response.status} ${response.statusText}`);
         }
-        
         const mdContent = await response.text();
         const { metadata, content } = parseFrontMatter(mdContent);
         
@@ -122,8 +119,11 @@ async function loadPost(id) {
             formattedDate = `${parseInt(day)} ${months[parseInt(month) - 1]} ${year} г.`;
         }
 
+        const postSlug = slugify(cleanId.replace(/^\d{4}-\d{2}-\d{2}-/, ''));
+
         return {
             id: cleanId,
+            slug: postSlug,
             title: metadata.title,
             excerpt: metadata.excerpt || "Описание статьи отсутствует...",
             category: metadata.category || "Заметки",
