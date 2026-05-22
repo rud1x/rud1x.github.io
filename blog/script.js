@@ -48,57 +48,29 @@ async function getPostFiles() {
         return [];
     }
 }
-
 function parseFrontMatter(mdContent) {
     let content = mdContent;
     if (content.charCodeAt(0) === 0xFEFF) {
         content = content.slice(1);
     }
+    const frontMatterMatch = content.match(/^---\s*[\r\n]+([^]*?)[\r\n]+---\s*[\r\n]*/);
     
-    const trimmedStart = content.trimStart();
-    if (!trimmedStart.startsWith('---')) {
+    if (!frontMatterMatch) {
         return { metadata: {}, content: mdContent };
     }
     
-    const lines = content.split(/\r?\n/);
-    let inFrontMatter = false;
-    let dashCount = 0;
-    let yamlLines = [];
-    let contentLines = [];
-    
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const trimmedLine = line.trim();
-        
-        if (!inFrontMatter && trimmedLine === '---') {
-            inFrontMatter = true;
-            dashCount++;
-            continue;
-        }
-        if (inFrontMatter && trimmedLine === '---') {
-            dashCount++;
-            inFrontMatter = false;
-            continue;
-        }
-        if (inFrontMatter) {
-            yamlLines.push(line);
-        } else if (dashCount >= 2) {
-            contentLines.push(line);
-        } else if (dashCount === 0 && trimmedLine !== '---') {
-            contentLines.push(line);
-        }
-    }
-    
-    if (dashCount < 2) {
-        return { metadata: {}, content: mdContent };
-    }
+    const yamlText = frontMatterMatch[1];
+    const articleContent = content.slice(frontMatterMatch[0].length);
     
     const metadata = {};
-    for (const line of yamlLines) {
+    const lines = yamlText.split(/\r?\n/);
+    
+    for (const line of lines) {
         const colonIndex = line.indexOf(':');
         if (colonIndex > 0) {
             let key = line.substring(0, colonIndex).trim();
             let value = line.substring(colonIndex + 1).trim();
+            
             if ((value.startsWith('"') && value.endsWith('"')) || 
                 (value.startsWith("'") && value.endsWith("'"))) {
                 value = value.slice(1, -1);
@@ -107,7 +79,7 @@ function parseFrontMatter(mdContent) {
         }
     }
     
-    return { metadata, content: contentLines.join('\n').trim() };
+    return { metadata, content: articleContent.trim() };
 }
 
 async function loadPost(filename) {
