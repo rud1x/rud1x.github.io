@@ -83,40 +83,52 @@ function parseFrontMatter(mdContent) {
     
     return { metadata, content: articleContent.trim() };
 }
-
-async function loadPost(filename) {
+async function loadPost(id) {
     try {
-        let correctFilename = filename;
-        if (!correctFilename.endsWith('.txt')) {
-            correctFilename += '.txt';
+        let filename = id;
+        if (!filename.endsWith('.txt')) {
+            filename += '.txt';
         }
 
-        const response = await fetch(`posts/${correctFilename}?_=${Date.now()}`);
+        const response = await fetch(`posts/${filename}?_=${Date.now()}`);
         
         if (!response.ok) {
-            throw new Error(`Сервер вернул статус ${response.status}`);
+            throw new Error(`Статус сервера: ${response.status} ${response.statusText}`);
         }
         
         const mdContent = await response.text();
         const { metadata, content } = parseFrontMatter(mdContent);
         
-        const dateMatch = filename.match(/^(\d{4})-(\d{2})-(\d{2})-/);
-        let date = "2024-01-01";
-        if (dateMatch) date = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+        if (!metadata || !metadata.title) {
+            throw new Error("Не удалось найти или распарсить 'title:' в начале файла.");
+        }
         
-        const displayDate = new Date(date).toLocaleDateString('ru-RU', {
-            day: 'numeric', month: 'long', year: 'numeric'
-        });
-        
-        let title = metadata.title || filename.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.txt$/, '').replace(/-/g, ' ');
-        let excerpt = metadata.excerpt || "Нажмите, чтобы прочитать статью...";
-        let category = metadata.category || "dev";
-        const slug = slugify(title);
-        
-        return { id: filename, slug, title, excerpt, category, date: displayDate, rawDate: date, content };
+        const cleanId = id.replace('.txt', '');
+        const dateMatch = cleanId.match(/^(\d{4}-\d{2}-\d{2})/);
+        let dateStr = dateMatch ? dateMatch[1] : "";
+        let formattedDate = dateStr ? formatDate(dateStr) : "Без даты";
+
+        return {
+            id: cleanId,
+            title: metadata.title,
+            excerpt: metadata.excerpt || "Описание статьи отсутствует...",
+            category: metadata.category || "Заметки",
+            date: formattedDate,
+            rawDate: dateStr,
+            content: content
+        };
     } catch (error) {
-        console.error(`Error loading ${filename}:`, error);
-        return null;
+        console.error(`[Блог] Ошибка загрузки поста (${id}):`, error.message);
+        
+        return {
+            id: id,
+            title: "⚠️ Статья недоступна",
+            excerpt: `Ошибка: ${error.message}`,
+            category: "error",
+            date: "--.--.----",
+            rawDate: "",
+            content: "Не удалось загрузить содержимое. Возможно, файл повреждён или отсутствует на сервере."
+        };
     }
 }
 
