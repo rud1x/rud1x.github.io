@@ -37,7 +37,8 @@ function slugify(str) {
 
 async function getPostFiles() {
     try {
-        const response = await fetch('/blog/posts/list.txt?_=' + Date.now());
+        // Убрали первый слэш, чтобы путь корректно подхватывал имя репозитория на GitHub Pages
+        const response = await fetch('posts/list.txt?_=' + Date.now());
         if (!response.ok) throw new Error('list.txt not found');
         const text = await response.text();
         return text.split('\n')
@@ -256,13 +257,18 @@ function setTheme(theme) {
     document.body.classList.remove('dark', 'light');
     document.body.classList.add(theme);
     localStorage.setItem('theme', theme);
-    const icon = document.querySelector('#themeToggle i');
-    if (icon) icon.className = theme === 'dark' ? 'ph-fill ph-moon' : 'ph-fill ph-sun';
+    
+    const cornerBtn = document.getElementById('cornerThemeBtn');
+    if (cornerBtn) {
+        const icon = cornerBtn.querySelector('i');
+        if (icon) {
+            icon.className = theme === 'dark' ? 'ph-fill ph-moon' : 'ph-fill ph-sun';
+        }
+    }
+    
     const canvas = document.getElementById('bgCanvas');
     if (canvas) canvas.style.opacity = theme === 'dark' ? '0.12' : '0.06';
 }
-
-
 
 function showAboutPage() {
     const container = document.querySelector('.container');
@@ -283,6 +289,7 @@ function showAboutPage() {
     document.title = 'О блоге | rudix';
     window.scrollTo({ top: 0 });
 }
+
 function showArticlePage(post) {
     const container = document.querySelector('.container');
     if (!originalMainContent) originalMainContent = container.innerHTML;
@@ -325,16 +332,6 @@ function showArticlePage(post) {
         });
     }
     
-    const cornerThemeBtn = document.getElementById('cornerThemeBtn');
-    if (cornerThemeBtn) {
-        const newBtn = cornerThemeBtn.cloneNode(true);
-        cornerThemeBtn.parentNode.replaceChild(newBtn, cornerThemeBtn);
-        newBtn.addEventListener('click', () => {
-            const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
-            setTheme(newTheme);
-        });
-    }
-    
     document.title = `${post.title} | rudix`;
     window.scrollTo({ top: 0 });
     
@@ -351,16 +348,6 @@ function showBlogPage() {
     if (searchInput) {
         searchInput.value = currentSearchQuery;
         searchInput.addEventListener('input', handleSearch);
-    }
-    
-    const cornerThemeBtn = document.getElementById('cornerThemeBtn');
-    if (cornerThemeBtn) {
-        const newBtn = cornerThemeBtn.cloneNode(true);
-        cornerThemeBtn.parentNode.replaceChild(newBtn, cornerThemeBtn);
-        newBtn.addEventListener('click', () => {
-            const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
-            setTheme(newTheme);
-        });
     }
     
     document.title = 'rudix | Блог разработчика';
@@ -444,10 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('homeLink')?.addEventListener('click', (e) => { e.preventDefault(); showBlogPage(); });
     document.getElementById('backToBlogBtn')?.addEventListener('click', () => showBlogPage());
     document.getElementById('backToBlogFromAbout')?.addEventListener('click', (e) => { e.preventDefault(); showBlogPage(); });
-    document.getElementById('themeToggle')?.addEventListener('click', () => {
-        const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
-        setTheme(newTheme);
-    });
     
     const savedTheme = localStorage.getItem('theme') || 'dark';
     setTheme(savedTheme);
@@ -484,21 +467,4 @@ if (cornerThemeBtn) {
         const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
         setTheme(newTheme);
     });
-}
-
-function setTheme(theme) {
-    document.body.classList.remove('dark', 'light');
-    document.body.classList.add(theme);
-    localStorage.setItem('theme', theme);
-    
-    const cornerBtn = document.getElementById('cornerThemeBtn');
-    if (cornerBtn) {
-        const icon = cornerBtn.querySelector('i');
-        if (icon) {
-            icon.className = theme === 'dark' ? 'ph-fill ph-moon' : 'ph-fill ph-sun';
-        }
-    }
-    
-    const canvas = document.getElementById('bgCanvas');
-    if (canvas) canvas.style.opacity = theme === 'dark' ? '0.12' : '0.06';
 }
