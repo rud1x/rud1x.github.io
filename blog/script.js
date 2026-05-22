@@ -37,7 +37,6 @@ function slugify(str) {
 
 async function getPostFiles() {
     try {
-        // Убрали первый слэш, чтобы путь корректно подхватывал имя репозитория на GitHub Pages
         const response = await fetch('posts/list.txt?_=' + Date.now());
         if (!response.ok) throw new Error('list.txt not found');
         const text = await response.text();
@@ -49,36 +48,45 @@ async function getPostFiles() {
         return [];
     }
 }
+
 function parseFrontMatter(mdContent) {
+    // 1. Очищаем от BOM и пробелов
     let content = mdContent.replace(/^\uFEFF/, '').trim();
 
     if (!content.startsWith('---')) {
         return { metadata: {}, content: mdContent };
     }
 
-    const firstDashEnd = 3;
-    const secondDashStart = content.indexOf('---', firstDashEnd);
-
-    if (secondDashStart === -1) {
+    // 2. Бьем по дефисам
+    const parts = content.split('---');
+    if (parts.length < 3) {
         return { metadata: {}, content: mdContent };
     }
-    
-    const yamlText = content.slice(firstDashEnd, secondDashStart).trim();
-    const articleContent = content.slice(secondDashStart + 3).trim();
+
+    const yamlText = parts[1].trim();
+    const articleContent = parts.slice(2).join('---').trim();
 
     const metadata = {};
-    const titleMatch = yamlText.match(/title:\s*["']?([^\r\n"']+)/i);
-    const excerptMatch = yamlText.match(/excerpt:\s*["']?([^\r\n"']+)/i);
-    const categoryMatch = yamlText.match(/category:\s*["']?([^\r\n"']+)/i);
 
-    if (titleMatch && titleMatch[1]) {
-        metadata.title = titleMatch[1].trim();
-    }
-    if (excerptMatch && excerptMatch[1]) {
-        metadata.excerpt = excerptMatch[1].trim();
-    }
-    if (categoryMatch && categoryMatch[1]) {
-        metadata.category = categoryMatch[1].trim();
+    // 3. Железобетонный разбор строк: делим по любым переносам (\n или \r\n)
+    const lines = yamlText.split(/\r?\n/);
+
+    for (let line of lines) {
+        line = line.trim();
+        if (!line) continue;
+
+        const colonIndex = line.indexOf(':');
+        if (colonIndex > 0) {
+            const key = line.substring(0, colonIndex).trim().toLowerCase();
+            let value = line.substring(colonIndex + 1).trim();
+
+            // Срезаем любые кавычки по краям
+            value = value.replace(/^["'`]|["'`]$/g, '').trim();
+
+            if (key && value) {
+                metadata[key] = value;
+            }
+        }
     }
 
     return { metadata, content: articleContent };
