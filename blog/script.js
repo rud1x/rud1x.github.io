@@ -48,31 +48,35 @@ async function getPostFiles() {
         return [];
     }
 }
-
 function parseFrontMatter(mdContent) {
     let content = mdContent.trimStart();
     if (content.charCodeAt(0) === 0xFEFF) {
         content = content.slice(1).trimStart();
     }
 
-    const frontMatterMatch = content.match(/---\s*[\r\n]+([^]*?)[\r\n]+---\s*[\r\n]*/);
-    
-    if (!frontMatterMatch || content.indexOf('---') !== 0) {
+    if (!content.startsWith('---')) {
         return { metadata: {}, content: mdContent };
     }
-    
-    const yamlText = frontMatterMatch[1];
-    const articleContent = content.slice(frontMatterMatch[0].length);
-    
+
+    const firstDashEnd = 3;
+    const secondDashStart = content.indexOf('---', firstDashEnd);
+
+    if (secondDashStart === -1) {
+        return { metadata: {}, content: mdContent };
+    }
+    const yamlText = content.slice(firstDashEnd, secondDashStart).trim();
+    const articleContent = content.slice(secondDashStart + 3).trim();
+
+
     const metadata = {};
     const lines = yamlText.split(/\r?\n/);
-    
+
     for (const line of lines) {
         const colonIndex = line.indexOf(':');
         if (colonIndex > 0) {
             let key = line.substring(0, colonIndex).trim();
             let value = line.substring(colonIndex + 1).trim();
-            
+
             if ((value.startsWith('"') && value.endsWith('"')) || 
                 (value.startsWith("'") && value.endsWith("'"))) {
                 value = value.slice(1, -1);
@@ -80,9 +84,10 @@ function parseFrontMatter(mdContent) {
             metadata[key] = value;
         }
     }
-    
-    return { metadata, content: articleContent.trim() };
+
+    return { metadata, content: articleContent };
 }
+
 async function loadPost(id) {
     try {
         let filename = id;
@@ -100,13 +105,22 @@ async function loadPost(id) {
         const { metadata, content } = parseFrontMatter(mdContent);
         
         if (!metadata || !metadata.title) {
-            throw new Error("Не удалось найти или распарсить 'title:' в начале файла.");
+            throw new Error("Не удалось распарсить 'title:' в метаданных.");
         }
         
         const cleanId = id.replace('.txt', '');
         const dateMatch = cleanId.match(/^(\d{4}-\d{2}-\d{2})/);
         let dateStr = dateMatch ? dateMatch[1] : "";
-        let formattedDate = dateStr ? formatDate(dateStr) : "Без даты";
+        
+        let formattedDate = "Без даты";
+        if (dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            const months = [
+                "января", "февраля", "марта", "апреля", "мая", "июня",
+                "июля", "августа", "сентября", "октября", "ноября", "декабря"
+            ];
+            formattedDate = `${parseInt(day)} ${months[parseInt(month) - 1]} ${year} г.`;
+        }
 
         return {
             id: cleanId,
@@ -127,7 +141,7 @@ async function loadPost(id) {
             category: "error",
             date: "--.--.----",
             rawDate: "",
-            content: "Не удалось загрузить содержимое. Возможно, файл повреждён или отсутствует на сервере."
+            content: "Не удалось загрузить содержимое статьи."
         };
     }
 }
