@@ -42,76 +42,33 @@ async function getPostFiles() {
         const text = await response.text();
         return text.split(/\r?\n/)
             .map(line => line.trim())
-            .filter(line => line && line.length > 4 && line.endsWith('.txt'));
+            .filter(line => line && line.length > 0);
     } catch (error) {
         console.error('Error loading list.txt:', error);
         return [];
     }
 }
 
-function parseFrontMatter(mdContent) {
-    let content = mdContent.replace(/^[\uFEFF\r\n\s]+/, '').trimStart();
-
-    if (!content.startsWith('---')) {
-        return { metadata: {}, content: mdContent };
-    }
-
-    const parts = content.split('---');
-    if (parts.length < 3) {
-        return { metadata: {}, content: mdContent };
-    }
-
-    const yamlText = parts[1].trim();
-    const articleContent = parts.slice(2).join('---').trim();
-
-    const metadata = {};
-    const lines = yamlText.split(/\r?\n/);
-
-    for (let line of lines) {
-        line = line.trim();
-        if (!line) continue;
-
-        const colonIndex = line.indexOf(':');
-        if (colonIndex > 0) {
-            const key = line.substring(0, colonIndex).trim().toLowerCase();
-            let value = line.substring(colonIndex + 1).trim();
-
-            value = value.replace(/^["'`]|["'`]$/g, '').trim();
-
-            if (key && value) {
-                metadata[key] = value;
-            }
-        }
-    }
-
-    return { metadata, content: articleContent };
-}
-
-async function loadPost(id) {
+async function loadPost(lineData) {
     try {
-        if (!id || id.trim() === "") return null;
+        if (!lineData || lineData.trim() === "") return null;
 
-        let filename = id.trim();
-        if (!filename.endsWith('.txt')) {
-            filename += '.txt';
-        }
+        const parts = lineData.split('|').map(p => p.trim());
+        if (parts.length < 2) return null;
+
+        const filename = parts[0];
+        const title = parts[1];
+        const excerpt = parts[2] || "Описание статьи отсутствует...";
+        const category = parts[3] || "dev";
 
         const response = await fetch(`posts/${filename}?_=${Date.now()}`);
-        
         if (!response.ok) {
             throw new Error(`Статус сервера: ${response.status} ${response.statusText}`);
         }
+        const content = await response.text();
         
-        const mdContent = await response.text();
-        
-        if (mdContent.trim().startsWith('<!DOCTYPE') || mdContent.trim().startsWith('<html')) {
-            throw new Error("Сервер вернул HTML-страницу вместо текстового файла поста.");
-        }
-
-        const { metadata, content } = parseFrontMatter(mdContent);
-        
-        if (!metadata || !metadata.title) {
-            throw new Error("Не удалось найти или распарсить параметр 'title:' в метаданных.");
+        if (content.trim().startsWith('<!DOCTYPE') || content.trim().startsWith('<html')) {
+            throw new Error("Сервер вернул HTML вместо текста.");
         }
         
         const cleanId = filename.replace('.txt', '');
@@ -133,21 +90,21 @@ async function loadPost(id) {
         return {
             id: cleanId,
             slug: postSlug,
-            title: metadata.title,
-            excerpt: metadata.excerpt || "Описание статьи отсутствует...",
-            category: metadata.category || "Заметки",
+            title: title,
+            excerpt: excerpt,
+            category: category,
             date: formattedDate,
             rawDate: dateStr,
-            content: content
+            content: content.trim()
         };
     } catch (error) {
-        console.error(`[Блог] Ошибка загрузки поста (${id}):`, error.message);
+        console.error(`[Блог] Ошибка загрузки поста (${lineData}):`, error.message);
         return null;
     }
 }
 
 function getCategoryLabel(cat) {
-    const map = { dev: "Разработка", bots: "Боты & API", life: "Indie-thoughts", opensource: "Open Source", tutorial: "Туториал", meta: "О блоге" };
+    const map = { dev: "Разработка", bots: "Боты & API", life: "Инди-мысли", opensource: "Open Source", tutorial: "Туториал", meta: "О блоге" };
     return map[cat] || cat;
 }
 

@@ -1,3 +1,2 @@
-2026-05-21-hello-world.txt
-2026-05-20-documentation.txt
-2026-05-20-test.txt
+2026-05-21-hello-world.txt | Привет, мир! | Моя самая первая запись в этом блоге | life
+2026-05-20-documentation.txt | Документация | шпаргалка для постов) | dev
