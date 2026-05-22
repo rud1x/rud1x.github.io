@@ -300,6 +300,9 @@ function showBlogPage() {
     const container = document.querySelector('.container');
     container.innerHTML = originalMainContent;
     
+    const loading = document.getElementById('loadingIndicator');
+    if (loading) loading.style.display = 'none';
+
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.value = currentSearchQuery;
@@ -310,7 +313,7 @@ function showBlogPage() {
     const baseUrl = window.location.pathname.split('/').slice(0, -1).join('/') || '/';
     window.history.pushState({ type: 'blog' }, '', baseUrl + (baseUrl.endsWith('/') ? '' : '/'));
     
-    applySearch();
+    applySearch();  
     renderPosts();
 }
 
