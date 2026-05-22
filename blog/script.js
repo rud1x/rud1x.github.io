@@ -86,8 +86,17 @@ function parseFrontMatter(mdContent) {
 
 async function loadPost(filename) {
     try {
-        const response = await fetch(`./posts/${filename}?_=${Date.now()}`);
-        if (!response.ok) throw new Error(`Failed to load ${filename}`);
+        let correctFilename = filename;
+        if (!correctFilename.endsWith('.txt')) {
+            correctFilename += '.txt';
+        }
+
+        const response = await fetch(`posts/${correctFilename}?_=${Date.now()}`);
+        
+        if (!response.ok) {
+            throw new Error(`Сервер вернул статус ${response.status}`);
+        }
+        
         const mdContent = await response.text();
         const { metadata, content } = parseFrontMatter(mdContent);
         
