@@ -49,40 +49,30 @@ async function getPostFiles() {
         return [];
     }
 }
-
 function parseFrontMatter(mdContent) {
-    let content = mdContent.replace(/^\uFEFF/, '').trimStart();
+    let content = mdContent.replace(/^\uFEFF/, '').trim();
 
     if (!content.startsWith('---')) {
         return { metadata: {}, content: mdContent };
     }
-
-    const firstDashEnd = 3;
-    const secondDashStart = content.indexOf('---', firstDashEnd);
-
-    if (secondDashStart === -1) {
+    const parts = content.split('---');
+    
+    if (parts.length < 3) {
         return { metadata: {}, content: mdContent };
     }
-    
-    const yamlText = content.slice(firstDashEnd, secondDashStart).trim();
-    const articleContent = content.slice(secondDashStart + 3).trim();
+
+    const yamlText = parts[1].trim();
+    const articleContent = parts.slice(2).join('---').trim();
 
     const metadata = {};
-    const lines = yamlText.split(/\r?\n/);
 
-    for (const line of lines) {
-        const colonIndex = line.indexOf(':');
-        if (colonIndex > 0) {
-            let key = line.substring(0, colonIndex).trim();
-            let value = line.substring(colonIndex + 1).trim();
+    const titleMatch = yamlText.match(/title:\s*["']?([^"'\r\n]+)["']?/);
+    const excerptMatch = yamlText.match(/excerpt:\s*["']?([^"'\r\n]+)["']?/);
+    const categoryMatch = yamlText.match(/category:\s*["']?([^"'\r\n]+)["']?/);
 
-            if ((value.startsWith('"') && value.endsWith('"')) || 
-                (value.startsWith("'") && value.endsWith("'"))) {
-                value = value.slice(1, -1);
-            }
-            metadata[key] = value;
-        }
-    }
+    if (titleMatch && titleMatch[1]) metadata.title = titleMatch[1].trim();
+    if (excerptMatch && excerptMatch[1]) metadata.excerpt = excerptMatch[1].trim();
+    if (categoryMatch && categoryMatch[1]) metadata.category = categoryMatch[1].trim();
 
     return { metadata, content: articleContent };
 }
@@ -367,32 +357,37 @@ async function loadAllPosts() {
     const loadingIndicator = document.getElementById('loadingIndicator');
     if (loadingIndicator) loadingIndicator.style.display = 'flex';
     
-    const postFiles = await getPostFiles();
-    if (postFiles.length === 0) {
-        if (loadingIndicator) loadingIndicator.innerHTML = '⚠️ Создайте файл posts/list.txt со списком статей';
-        return;
-    }
-    
-    const promises = postFiles.map(file => loadPost(file));
-    const posts = await Promise.all(promises);
-    allPosts = posts.filter(post => post !== null);
-    allPosts.sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
-    
-    if (loadingIndicator) loadingIndicator.style.display = 'none';
-    
-    applySearch();
-    renderPosts();
-    
-    if (!originalMainContent) {
-        const container = document.querySelector('.container');
-        originalMainContent = container.innerHTML;
-    }
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const postSlug = urlParams.get('post');
-    if (postSlug) {
-        const post = allPosts.find(p => p.slug === postSlug);
-        if (post) showArticlePage(post);
+    try {
+        const postFiles = await getPostFiles();
+        if (postFiles.length === 0) {
+            if (loadingIndicator) loadingIndicator.innerHTML = '⚠️ Создайте файл posts/list.txt со списком статей';
+            return;
+        }
+        
+        const promises = postFiles.map(file => loadPost(file));
+        const posts = await Promise.all(promises);
+        
+        allPosts = posts.filter(post => post !== null);
+        allPosts.sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+        
+        applySearch();
+        renderPosts();
+        
+        if (!originalMainContent) {
+            const container = document.querySelector('.container');
+            originalMainContent = container.innerHTML;
+        }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const postSlug = urlParams.get('post');
+        if (postSlug) {
+            const post = allPosts.find(p => p.slug === postSlug);
+            if (post) showArticlePage(post);
+        }
+    } catch (err) {
+        console.error("Критическая ошибка при загрузке блога:", err);
+    } finally {
+        if (loadingIndicator) loadingIndicator.style.display = 'none';
     }
 }
 
