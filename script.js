@@ -1,292 +1,211 @@
-(function initGridBackground() {
-    const canvas = document.getElementById('bgCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animationId = null;
-    
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    
-    function drawGrid() {
-        if (!ctx) return;
-        const w = canvas.width, h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
-        ctx.lineWidth = 1;
-        const step = 50;
-        const offset = (Date.now() * 0.03) % step;
-        
-        for (let x = offset; x < w; x += step) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, h);
-            ctx.stroke();
-        }
-        for (let y = offset; y < h; y += step) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(w, y);
-            ctx.stroke();
-        }
-        animationId = requestAnimationFrame(drawGrid);
-    }
-    
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    drawGrid();
-})();
+let allPosts = [];
+let filteredPosts = [];
+let currentPage = 1;
+let currentSearchQuery = "";
+const postsPerPage = 6;
 
-function calculateAge(birthDate) {
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
-    return age;
-}
-const ageElement = document.getElementById('age');
-if (ageElement) ageElement.textContent = calculateAge('2012-02-10');
+let originalMainContent = '';
 
-const projectsData = [
-    {
-        id: 2,
-        title: 'Nooke',
-        description: 'Уютное Discord-сообщество для общения и игр',
-        category: 'discord',
-        icon: '🎮',
-        image: 'https://i.ibb.co/PsPX5Z97/b3c5163a185008b1e6daf2fc83a4c1fb.png',
-        link: 'https://discord.gg/WZgdVcemmk'
-    },
-    {
-        id: 1,
-        title: 'Серийчик Бот',
-        description: 'Игровой Telegram-бот с экономикой и системой уровней',
-        category: 'telegram',
-        icon: '🎲',
-        image: 'https://i.ibb.co/k66xYQwj/IMG-20260409-190151-122.jpg',
-        link: 'https://t.me/strikepet_bot'
-    },
-    {
-        id: 3,
-        title: 'Comaru CardBot',
-        description: 'Коллекционная карточная игра в Telegram',
-        category: 'telegram',
-        icon: '🃟',
-        image: 'https://i.ibb.co/cStk7zqJ/dc-Se0.jpg',
-        link: 'https://t.me/comaru_cardbot'
-    },
-    {
-        id: 4,
-        title: 'HuroBot',
-        description: 'Open Source инструмент для автоматизации и OSINT',
-        category: 'code',
-        icon: '🤖',
-        image: 'https://i.ibb.co/v08LpSt/IMG-20260409-190254-955.jpg',
-        link: 'https://github.com/rud1x/HuroBot_tg'
-    },
-    {
-        id: 5,
-        title: 'uHunt',
-        description: 'Инструмент для поиска свободных username',
-        category: 'telegram',
-        icon: '✈️',
-        image: 'https://i.ibb.co/67fCkYvk/Untitled-project-6.jpg',
-        link: 'https://t.me/uHunt_bot'
-    },
-    {
-        id: 6,
-        title: 'wexos',
-        description: 'Многофункциональный юзербот на основе BusinessApi',
-        category: 'telegram',
-        icon: '⚙️',
-        image: 'https://i.ibb.co/HpVYWpht/IMG-20260426-011158-447.jpg',
-        link: 'https://t.me/wexosbot'
-    },
-    {
-        id: 7,
-        title: 'NeoShell',
-        description: 'Управляй своим ПК с телефона через Wi-Fi',
-        category: 'code',
-        icon: '💻',
-        image: 'https://i.ibb.co/gL2pJL2m/image.png',
-        link: 'https://github.com/rud1x/NeoShell'
-    },
-    {
-        id: 8,
-        title: 'GitWid',
-        description: 'Виджеты на основе Rainmeter для отображения вашей GitHub-статистики',
-        category: 'code',
-        icon: '💻',
-        image: 'https://i.ibb.co/bZQm86c/Gemini-Generated-Image-bnpo6vbnpo6vbnpo-1.png',
-        link: 'https://github.com/rud1x/GitWid'
-    }
-];
-
-function getCategoryName(category) {
-    const names = {
-        'discord': 'Discord',
-        'telegram': 'Telegram',
-        'code': 'Open Source'
+function slugify(str) {
+    const translitMap = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '',
+        'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
     };
-    return names[category] || category;
+    
+    let result = '';
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (translitMap[char]) {
+            result += translitMap[char];
+        } else if (/[a-zA-Z0-9]/.test(char)) {
+            result += char;
+        } else if (char === ' ') {
+            result += '-';
+        }
+    }
+    
+    result = result.toLowerCase()
+        .replace(/[^a-z0-9-]/g, '')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    
+    return result || 'post';
 }
 
-function renderProjects(filter = 'all') {
-    const grid = document.getElementById('projectsGrid');
-    if (!grid) {
-        console.error('projectsGrid не найден');
-        return;
+async function getPostFiles() {
+    try {
+        const response = await fetch('posts/list.txt?_=' + Date.now());
+        if (!response.ok) throw new Error('list.txt not found');
+        const text = await response.text();
+        return text.split(/\r?\n/)
+            .map(line => line.trim())
+            .filter(line => line && line.length > 0);
+    } catch (error) {
+        console.error('Error loading list.txt:', error);
+        return [];
     }
-    
-    const filtered = filter === 'all' 
-        ? projectsData 
-        : projectsData.filter(p => p.category === filter);
-    
-    if (filtered.length === 0) {
-        grid.innerHTML = '<div class="no-projects">✨ Проектов в этой категории пока нет</div>';
-        return;
-    }
-    
-    grid.innerHTML = filtered.map((project, index) => {
-        const imageHtml = project.image 
-            ? `<img src="${project.image}" alt="${project.title}" loading="lazy">`
-            : `<span style="font-size: 3rem;">${project.icon}</span>`;
-        
-        return `<div class="project-card" data-id="${project.id}" data-link="${project.link}" style="animation: fadeInUp 0.5s ease ${index * 0.05}s both">
-    <div class="project-img">
-        ${imageHtml}
-    </div>
-    <div class="project-info">
-        <h3>${escapeHtml(project.title)}</h3>
-        <p>${escapeHtml(project.description)}</p>
-        <span class="project-tag">${getCategoryName(project.category)}</span>
-    </div>
-</div>`;
-    }).join('');
-    
-    document.querySelectorAll('.project-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const link = card.dataset.link;
-            if (link) {
-                window.open(link, '_blank');
-            }
-        });
-        
-        const img = card.querySelector('.project-img img');
-        if (img) {
-            img.addEventListener('error', function() {
-                const projectId = card.dataset.id;
-                const project = projectsData.find(p => p.id == projectId);
-                if (project) {
-                    this.style.display = 'none';
-                    const fallbackDiv = document.createElement('span');
-                    fallbackDiv.style.fontSize = '3rem';
-                    fallbackDiv.textContent = project.icon;
-                    this.parentElement.appendChild(fallbackDiv);
-                }
-            });
+}
+
+async function loadPost(lineData) {
+    try {
+        if (!lineData || lineData.trim() === "") return null;
+
+        const parts = lineData.split('|').map(p => p.trim());
+        if (parts.length < 2) return null;
+
+        const filename = parts[0];
+        const title = parts[1];
+        const excerpt = parts[2] || "Описание статьи отсутствует...";
+        const category = parts[3] || "dev";
+
+        const response = await fetch(`posts/${filename}?_=${Date.now()}`);
+        if (!response.ok) {
+            throw new Error(`Статус сервера: ${response.status} ${response.statusText}`);
         }
-    });
+        const content = await response.text();
+        
+        if (content.trim().startsWith('<!DOCTYPE') || content.trim().startsWith('<html')) {
+            throw new Error("Сервер вернул HTML вместо текста.");
+        }
+        
+        const cleanId = filename.replace('.txt', '');
+        const dateMatch = cleanId.match(/^(\d{4}-\d{2}-\d{2})/);
+        let dateStr = dateMatch ? dateMatch[1] : "";
+        
+        let formattedDate = "Без даты";
+        if (dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            const months = [
+                "января", "февраля", "марта", "апреля", "мая", "июня",
+                "июля", "августа", "сентября", "октября", "ноября", "декабря"
+            ];
+            formattedDate = `${parseInt(day)} ${months[parseInt(month) - 1]} ${year} г.`;
+        }
+
+        const postSlug = slugify(cleanId.replace(/^\d{4}-\d{2}-\d{2}-/, ''));
+
+        return {
+            id: cleanId,
+            slug: postSlug,
+            title: title,
+            excerpt: excerpt,
+            category: category,
+            date: formattedDate,
+            rawDate: dateStr,
+            content: content.trim()
+        };
+    } catch (error) {
+        console.error(`[Блог] Ошибка загрузки поста (${lineData}):`, error.message);
+        return null;
+    }
+}
+
+function getCategoryLabel(cat) {
+    const map = { dev: "Разработка", bots: "Боты & API", life: "Инди-мысли", opensource: "Open Source", tutorial: "Туториал", meta: "О блоге" };
+    return map[cat] || cat;
+}
+
+function applySearch() {
+    let filtered = [...allPosts];
+    if (currentSearchQuery && currentSearchQuery.trim() !== "") {
+        const query = currentSearchQuery.toLowerCase().trim();
+        filtered = filtered.filter(p => p.title.toLowerCase().includes(query) || p.excerpt.toLowerCase().includes(query));
+    }
+    filtered.sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+    filteredPosts = filtered;
 }
 
 function escapeHtml(str) {
     if (!str) return '';
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
 }
 
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const filter = btn.dataset.filter;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderProjects(filter);
-    });
-});
-
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const tabId = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
-    });
-});
-
-async function loadGitHubStats() {
-    const grid = document.getElementById('githubStatsGrid');
-    if (!grid) return;
-    try {
-        const res = await fetch('https://raw.githubusercontent.com/rud1x/rud1x/main/cfg.json');
-        if (res.ok) {
-            const stats = await res.json();
-            grid.innerHTML = `
-                <div class="stat-card"><div class="stat-value">${stats.repos || 6}</div><div class="stat-label">Репозитории</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.stars || 0}</div><div class="stat-label">Звёзды</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.followers || 2}</div><div class="stat-label">Подписчики</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.totalCommits || 0}</div><div class="stat-label">Коммиты</div></div>
-            `;
-        } else {
-            throw new Error();
-        }
-    } catch {
-        grid.innerHTML = `<div class="stat-card" style="grid-column:1/-1"><div class="stat-value">—</div><div class="stat-label">Не удалось загрузить</div></div>`;
-    }
+function highlightText(text, query) {
+    if (!query || query.trim() === "") return escapeHtml(text);
+    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+    return escapeHtml(text).replace(regex, `<mark>$1</mark>`);
 }
 
-async function loadCodewarsStats() {
-    const grid = document.getElementById('codewarsStatsGrid');
+function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function renderPosts() {
+    const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+    
+    const start = (currentPage - 1) * postsPerPage;
+    const paginatedPosts = filteredPosts.slice(start, start + postsPerPage);
+    const grid = document.getElementById('postsGrid');
     if (!grid) return;
     
-    try {
-        const response = await fetch('https://www.codewars.com/api/v1/users/rud1x');
-        
-        if (!response.ok) throw new Error('User not found');
-        
-        const data = await response.json();
-        
-        const rankColors = {
-            'white': '#cccccc',
-            'yellow': '#ffcc00',
-            'blue': '#4a90e2',
-            'purple': '#9b59b6',
-            'black': '#222222'
-        };
-        const rankColor = rankColors[data.ranks.overall.color] || '#ffffff';
-        
-        grid.innerHTML = `
-            <div class="stat-card"><div class="stat-value" style="color: ${rankColor}">${data.ranks.overall.name}</div><div class="stat-label">Ранг</div></div>
-            <div class="stat-card"><div class="stat-value">${data.honor || 0}</div><div class="stat-label">Очки чести</div></div>
-            <div class="stat-card"><div class="stat-value">${data.codeChallenges.totalCompleted || 0}</div><div class="stat-label">Решено задач</div></div>
-            <div class="stat-card"><div class="stat-value">${data.ranks.overall.score || 0}</div><div class="stat-label">Всего очков</div></div>
-        `;
-    } catch (error) {
-        console.error('Ошибка загрузки Codewars:', error);
-        grid.innerHTML = `
-            <div class="stat-card" style="grid-column:1/-1"><div class="stat-value">—</div><div class="stat-label">Не удалось загрузить</div></div>
-        `;
+    const existingInfo = document.querySelector('.search-result-info');
+    if (existingInfo) existingInfo.remove();
+    
+    if (currentSearchQuery && currentSearchQuery.trim() !== "") {
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'search-result-info';
+        infoDiv.innerHTML = `<i class="ph-fill ph-magnifying-glass"></i> Найдено ${filteredPosts.length} статей по запросу "${escapeHtml(currentSearchQuery)}"`;
+        const searchWrapper = document.querySelector('.search-wrapper');
+        if (searchWrapper && !document.querySelector('.search-result-info')) {
+            searchWrapper.insertAdjacentHTML('afterend', infoDiv.outerHTML);
+        }
     }
+    
+    if (paginatedPosts.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 2rem;"><i class="ph-fill ph-magnifying-glass" style="font-size: 2.5rem; color: var(--gray); margin-bottom: 0.8rem; display: block;"></i><div>Ничего не найдено</div><div style="color: var(--gray); font-size: 0.8rem;">Попробуйте изменить запрос</div></div>`;
+        document.getElementById('paginationControls').innerHTML = '';
+        return;
+    }
+    
+    const query = currentSearchQuery;
+    grid.innerHTML = paginatedPosts.map(post => `
+        <div class="post-card" data-slug="${post.slug}">
+            <div class="post-content">
+                <div class="post-meta">
+                    <span>${post.date}</span>
+                    <span class="post-category">${getCategoryLabel(post.category)}</span>
+                </div>
+                <h3 class="post-title">${query ? highlightText(post.title, query) : escapeHtml(post.title)}</h3>
+                <p class="post-excerpt">${query ? highlightText(post.excerpt, query) : escapeHtml(post.excerpt)}</p>
+                <div class="read-more">Читать заметку <i class="ph-fill ph-arrow-right"></i></div>
+            </div>
+        </div>
+    `).join('');
+    
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.addEventListener('click', () => openPostBySlug(card.dataset.slug));
+    });
+    
+    renderPagination(totalPages);
 }
 
-const contactBtn = document.getElementById('contactBtn');
-const contactDropdown = document.getElementById('contactDropdown');
-if (contactBtn && contactDropdown) {
-    contactBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        contactDropdown.classList.toggle('show');
-    });
-    document.addEventListener('click', (e) => {
-        if (!contactBtn.contains(e.target) && !contactDropdown.contains(e.target)) {
-            contactDropdown.classList.remove('show');
-        }
+function renderPagination(totalPages) {
+    const paginationDiv = document.getElementById('paginationControls');
+    if (!paginationDiv) return;
+    if (totalPages <= 1) { paginationDiv.innerHTML = ''; return; }
+    
+    let btns = '';
+    for (let i = 1; i <= totalPages; i++) {
+        btns += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+    }
+    paginationDiv.innerHTML = btns;
+    
+    document.querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentPage = parseInt(btn.dataset.page);
+            renderPosts();
+            window.scrollTo({ top: 400, behavior: 'smooth' });
+        });
     });
 }
 
@@ -294,215 +213,222 @@ function setTheme(theme) {
     document.body.classList.remove('dark', 'light');
     document.body.classList.add(theme);
     localStorage.setItem('theme', theme);
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.theme === theme);
-    });
+    
+    const cornerBtn = document.getElementById('cornerThemeBtn');
+    if (cornerBtn) {
+        const icon = cornerBtn.querySelector('i');
+        if (icon) {
+            icon.className = theme === 'dark' ? 'ph-fill ph-moon' : 'ph-fill ph-sun';
+        }
+    }
+    
     const canvas = document.getElementById('bgCanvas');
-    if (canvas) canvas.style.opacity = theme === 'dark' ? '0.15' : '0.08';
+    if (canvas) canvas.style.opacity = theme === 'dark' ? '0.12' : '0.06';
 }
 
-const savedTheme = localStorage.getItem('theme') || 'dark';
-setTheme(savedTheme);
-document.querySelectorAll('.theme-btn').forEach(btn => {
-    btn.addEventListener('click', () => setTheme(btn.dataset.theme));
-});
-
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-`;
-document.head.appendChild(style);
-
-document.addEventListener('DOMContentLoaded', () => {
-    renderProjects('all');
-    loadGitHubStats();
-    loadCodewarsStats();
-});
-
-
-const backToTopBtn = document.getElementById('backToTop');
-
-if (backToTopBtn) {
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 500) {
-            backToTopBtn.classList.add('show');
-        } else {
-            backToTopBtn.classList.remove('show');
-        }
-    });
+function showAboutPage() {
+    const container = document.querySelector('.container');
+    const aboutHTML = `
+        <header class="main-header"><div class="nav-group"><nav class="main-nav"><a href="/" class="nav-item" id="navPortfolio">Портфолио</a><a href="/blog/" class="nav-item active" id="navBlog">Блог</a></nav><button id="themeToggle" class="theme-btn"><i class="ph-fill ph-moon"></i></button></div></header>
+        <div class="about-content"><button id="backToBlogFromAbout" class="back-button">← Назад к блогу</button><div class="about-card"><div class="about-icon"><i class="ph-fill ph-book-open"></i></div><h1>О блоге</h1><p>rudix notes — место, где я делюсь опытом, инсайтами и историями из разработки</p><div class="about-grid"><div class="about-item"><i class="ph-fill ph-robot"></i><span>Telegram и Discord боты</span></div><div class="about-item"><i class="ph-fill ph-code"></i><span>Python, aiogram, asyncio</span></div><div class="about-item"><i class="ph-fill ph-github-logo"></i><span>Open Source проекты</span></div><div class="about-item"><i class="ph-fill ph-linux-logo"></i><span>Linux и серверы</span></div></div></div></div>
+    `;
+    container.innerHTML = aboutHTML;
     
-    backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-}
-
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '20px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-document.querySelectorAll('.project-card, .skill-card, .stat-card, .timeline-item').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    observer.observe(el);
-});
-
-const heroContent = document.querySelector('.hero-content');
-if (heroContent) {
-    heroContent.style.opacity = '0';
-    heroContent.style.transform = 'translateY(20px)';
-    heroContent.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    setTimeout(() => {
-        heroContent.style.opacity = '1';
-        heroContent.style.transform = 'translateY(0)';
-    }, 100);
-}
-
-const cornerBtn = document.getElementById('cornerThemeBtn');
-
-function updateCornerBtnIcon() {
-    if (!cornerBtn) return;
-    const icon = cornerBtn.querySelector('i');
-    const isDark = document.body.classList.contains('dark');
-    if (isDark) {
-        icon.className = 'ph-fill ph-moon';
-    } else {
-        icon.className = 'ph-fill ph-sun';
-    }
-}
-
-if (cornerBtn) {
-    updateCornerBtnIcon();
-    
-    cornerBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const isDark = document.body.classList.contains('dark');
-        const newTheme = isDark ? 'light' : 'dark';
-        
+    document.getElementById('backToBlogFromAbout')?.addEventListener('click', (e) => { e.preventDefault(); showBlogPage(); });
+    document.getElementById('footerAboutLink')?.addEventListener('click', (e) => { e.preventDefault(); showAboutPage(); });
+    document.getElementById('navPortfolio')?.addEventListener('click', (e) => { e.preventDefault(); window.location.href = '/'; });
+    document.getElementById('themeToggle')?.addEventListener('click', () => {
+        const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
         setTheme(newTheme);
-        updateCornerBtnIcon();
-        
-        this.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            if (cornerBtn) cornerBtn.style.transform = '';
-        }, 150);
     });
+    
+    document.title = 'О блоге | rudix';
+    window.scrollTo({ top: 0 });
 }
 
-const themeObserver = new MutationObserver(function() {
-    updateCornerBtnIcon();
+function showArticlePage(post) {
+    const container = document.querySelector('.container');
+    if (!originalMainContent) originalMainContent = container.innerHTML;
+    
+    const articleHTML = `
+        <div style="height: 40px;"></div>
+        <div class="post-detail-container">
+            <button id="backToBlogBtn" class="back-button">← Назад ко всем записям</button>
+            <article class="post-article">
+                <h1>${escapeHtml(post.title)}</h1>
+                <div class="post-detail-meta">
+                    <span>${post.date}</span>
+                    <span class="post-category">${getCategoryLabel(post.category)}</span>
+                </div>
+                <div id="postDetailContent" class="post-content-markdown"></div>
+            </article>
+        </div>
+    `;
+    
+    container.innerHTML = articleHTML;
+    
+    if (typeof marked !== 'undefined') {
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: false,
+            mangle: false,
+            sanitize: false
+        });
+        document.getElementById('postDetailContent').innerHTML = marked.parse(post.content);
+    } else {
+        document.getElementById('postDetailContent').innerHTML = `<pre>${escapeHtml(post.content)}</pre>`;
+    }
+    
+    const backBtn = document.getElementById('backToBlogBtn');
+    if (backBtn) {
+        backBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showBlogPage();
+        });
+    }
+    
+    document.title = `${post.title} | rudix`;
+    window.scrollTo({ top: 0 });
+    
+    const newUrl = `${window.location.pathname.split('/').slice(0, -1).join('/')}/?post=${post.slug}`;
+    window.history.pushState({ type: 'article', slug: post.slug }, '', newUrl);
+}
+
+function showBlogPage() {
+    if (!originalMainContent) { window.location.reload(); return; }
+    const container = document.querySelector('.container');
+    container.innerHTML = originalMainContent;
+    
+    const loading = document.getElementById('loadingIndicator');
+    if (loading) loading.style.display = 'none';
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = currentSearchQuery;
+        searchInput.addEventListener('input', handleSearch);
+    }
+    
+    document.title = 'rudix | Блог разработчика';
+    const baseUrl = window.location.pathname.split('/').slice(0, -1).join('/') || '/';
+    window.history.pushState({ type: 'blog' }, '', baseUrl + (baseUrl.endsWith('/') ? '' : '/'));
+    
+    applySearch();  
+    renderPosts();
+}
+
+async function openPostBySlug(slug) {
+    const post = allPosts.find(p => p.slug === slug);
+    if (post) showArticlePage(post);
+}
+
+async function loadAllPosts() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) loadingIndicator.style.display = 'flex';
+    
+    try {
+        const postFiles = await getPostFiles();
+        if (postFiles.length === 0) {
+            if (loadingIndicator) loadingIndicator.innerHTML = '⚠️ Создайте файл posts/list.txt со списком статей';
+            return;
+        }
+        
+        const promises = postFiles.map(file => loadPost(file));
+        const posts = await Promise.all(promises);
+        
+        allPosts = posts.filter(post => post !== null);
+        allPosts.sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+        
+        applySearch();
+        renderPosts();
+        
+        if (!originalMainContent) {
+            const container = document.querySelector('.container');
+            originalMainContent = container.innerHTML;
+        }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const postSlug = urlParams.get('post');
+        if (postSlug) {
+            const post = allPosts.find(p => p.slug === postSlug);
+            if (post) showArticlePage(post);
+        }
+    } catch (err) {
+        console.error("Критическая ошибка при загрузке блога:", err);
+    } finally {
+        if (loadingIndicator) loadingIndicator.style.display = 'none';
+    }
+}
+
+let searchTimeout;
+function handleSearch(e) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearchQuery = e.target.value;
+        currentPage = 1;
+        applySearch();
+        renderPosts();
+    }, 300);
+}
+
+window.addEventListener('popstate', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const postSlug = urlParams.get('post');
+    if (postSlug) {
+        const post = allPosts.find(p => p.slug === postSlug);
+        if (post) showArticlePage(post);
+        else showBlogPage();
+    } else {
+        showBlogPage();
+    }
 });
-themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-
-function initTypingAnimation() {
-    const heroTitle = document.querySelector('.hero-title');
-    if (!heroTitle) return;
-    
-    const cursorSpan = heroTitle.querySelector('.cursor');
-    if (!cursorSpan) return;
-    
-    const firstLineText = "JUNIOR";
-    const secondLineText = "DEVELOPER";
-    
-    heroTitle.innerHTML = '';
-    
-
-    const firstLineSpan = document.createElement('span');
-    firstLineSpan.className = 'typing-line';
-    const breakSpan = document.createElement('br');
-    const secondLineSpan = document.createElement('span');
-    secondLineSpan.className = 'typing-line';
-    
-    heroTitle.appendChild(firstLineSpan);
-    heroTitle.appendChild(breakSpan);
-    heroTitle.appendChild(secondLineSpan);
-    heroTitle.appendChild(cursorSpan);
-    
-    let firstIndex = 0;
-    let secondIndex = 0;
-    
-    function typeFirstLine() {
-        if (firstIndex < firstLineText.length) {
-            firstLineSpan.textContent += firstLineText.charAt(firstIndex);
-            firstIndex++;
-            setTimeout(typeFirstLine, 100);
-        } else {
-            setTimeout(typeSecondLine, 200);
-        }
-    }
-    
-    function typeSecondLine() {
-        if (secondIndex < secondLineText.length) {
-            secondLineSpan.textContent += secondLineText.charAt(secondIndex);
-            secondIndex++;
-            setTimeout(typeSecondLine, 100);
-        }
-    }
-    
-    setTimeout(typeFirstLine, 300);
-}
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderProjects('all');
-    loadGitHubStats();
-    loadCodewarsStats();
-    setTimeout(initTypingAnimation, 500);
+    loadAllPosts();
+    
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.addEventListener('input', handleSearch);
+    
+    document.getElementById('aboutBlogLink')?.addEventListener('click', (e) => { e.preventDefault(); showAboutPage(); });
+    document.getElementById('footerAboutLink')?.addEventListener('click', (e) => { e.preventDefault(); showAboutPage(); });
+    document.getElementById('blogHomeLink')?.addEventListener('click', (e) => { e.preventDefault(); showBlogPage(); });
+    document.getElementById('homeLink')?.addEventListener('click', (e) => { e.preventDefault(); showBlogPage(); });
+    document.getElementById('backToBlogBtn')?.addEventListener('click', () => showBlogPage());
+    document.getElementById('backToBlogFromAbout')?.addEventListener('click', (e) => { e.preventDefault(); showBlogPage(); });
+    
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+    
+    document.getElementById('navPortfolio')?.classList.remove('active');
+    document.getElementById('navBlog')?.classList.add('active');
 });
 
-function compactStickyHeader() {
-    if (window.innerWidth > 768) return;
-    
-    const headers = document.querySelectorAll('.section-header');
-    headers.forEach(header => {
-        header.style.padding = '0.2rem 0';
-        header.style.minHeight = 'auto';
-        header.style.lineHeight = '1.2';
+(function initCanvas() {
+    const canvas = document.getElementById('bgCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    function draw() {
+        if (!ctx) return;
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1;
+        const step = 55;
+        const offset = (Date.now() * 0.02) % step;
+        for (let x = offset; x < w; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+        for (let y = offset; y < h; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+        requestAnimationFrame(draw);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    draw();
+})();
+
+const cornerThemeBtn = document.getElementById('cornerThemeBtn');
+if (cornerThemeBtn) {
+    cornerThemeBtn.addEventListener('click', () => {
+        const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
+        setTheme(newTheme);
     });
-    
-    const titles = document.querySelectorAll('.section-title');
-    titles.forEach(title => {
-        title.style.padding = '0.1rem 0';
-        title.style.margin = '0';
-        title.style.fontSize = '0.7rem';
-    });
-}
-
-document.addEventListener('DOMContentLoaded', compactStickyHeader);
-window.addEventListener('resize', compactStickyHeader);
-
-function getDaysSince(dateString) {
-    const startDate = new Date(dateString);
-    const today = new Date();
-    const diffTime = Math.abs(today - startDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-}
-
-const daysElement = document.getElementById('codingDays');
-if (daysElement) {
-    const days = getDaysSince('2026-04-06');
-    daysElement.textContent = days;
 }
