@@ -49,66 +49,33 @@ async function getPostFiles() {
     }
 }
 function parseFrontMatter(mdContent) {
-    // Удаляем BOM (Byte Order Mark) если есть
-    let content = mdContent;
-    if (content.charCodeAt(0) === 0xFEFF) {
-        content = content.slice(1);
-    }
-    
-    // Обрезаем пробелы и переносы строк в начале
-    const trimmedStart = content.trimStart();
-    if (!trimmedStart.startsWith('---')) {
-        return { metadata: {}, content: mdContent };
-    }
-    
-    const lines = content.split('\n');
-    let inFrontMatter = false;
-    let dashCount = 0;
-    let yamlLines = [];
-    let contentLines = [];
-    
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const trimmedLine = line.trim();
-        
-        if (!inFrontMatter && trimmedLine === '---') {
-            inFrontMatter = true;
-            dashCount++;
-            continue;
-        }
-        if (inFrontMatter && trimmedLine === '---') {
-            dashCount++;
-            inFrontMatter = false;
-            continue;
-        }
-        if (inFrontMatter) {
-            yamlLines.push(line);
-        } else if (dashCount >= 2) {
-            contentLines.push(line);
-        } else if (dashCount === 0 && trimmedLine !== '---') {
-            contentLines.push(line);
-        }
-    }
-    
-    if (dashCount < 2) {
-        return { metadata: {}, content: mdContent };
-    }
-    
     const metadata = {};
-    for (const line of yamlLines) {
-        const colonIndex = line.indexOf(':');
-        if (colonIndex > 0) {
-            let key = line.substring(0, colonIndex).trim();
-            let value = line.substring(colonIndex + 1).trim();
-            if ((value.startsWith('"') && value.endsWith('"')) || 
-                (value.startsWith("'") && value.endsWith("'"))) {
-                value = value.slice(1, -1);
+    let content = mdContent;
+
+    const frontMatterMatch = mdContent.match(/^---\s*[\r\n]+([^]*?)[\r\n]+---\s*[\r\n]*/);
+
+    if (frontMatterMatch) {
+        const yamlText = frontMatterMatch[1];
+        content = mdContent.slice(frontMatterMatch[0].length);
+
+        const lines = yamlText.split(/\r?\n/);
+        
+        lines.forEach(line => {
+            const colonIndex = line.indexOf(':');
+            if (colonIndex !== -1) {
+                const key = line.slice(0, colonIndex).trim();
+                // Убираем кавычки, если они есть вокруг значения
+                let value = line.slice(colonIndex + 1).trim();
+                if ((value.startsWith('"') && value.endsWith('"')) || 
+                    (value.startsWith("'") && value.endsWith("'"))) {
+                    value = value.slice(1, -1);
+                }
+                metadata[key] = value;
             }
-            metadata[key] = value;
-        }
+        });
     }
-    
-    return { metadata, content: contentLines.join('\n').trim() };
+
+    return { ...metadata, content: content.trim() };
 }
 
 async function loadPost(filename) {
