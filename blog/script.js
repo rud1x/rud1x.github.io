@@ -48,13 +48,20 @@ async function getPostFiles() {
         return [];
     }
 }
-
 function parseFrontMatter(mdContent) {
-    if (!mdContent.trim().startsWith('---')) {
+    // Удаляем BOM (Byte Order Mark) если есть
+    let content = mdContent;
+    if (content.charCodeAt(0) === 0xFEFF) {
+        content = content.slice(1);
+    }
+    
+    // Обрезаем пробелы и переносы строк в начале
+    const trimmedStart = content.trimStart();
+    if (!trimmedStart.startsWith('---')) {
         return { metadata: {}, content: mdContent };
     }
     
-    const lines = mdContent.split('\n');
+    const lines = content.split('\n');
     let inFrontMatter = false;
     let dashCount = 0;
     let yamlLines = [];
@@ -62,12 +69,14 @@ function parseFrontMatter(mdContent) {
     
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        if (!inFrontMatter && line.trim() === '---') {
+        const trimmedLine = line.trim();
+        
+        if (!inFrontMatter && trimmedLine === '---') {
             inFrontMatter = true;
             dashCount++;
             continue;
         }
-        if (inFrontMatter && line.trim() === '---') {
+        if (inFrontMatter && trimmedLine === '---') {
             dashCount++;
             inFrontMatter = false;
             continue;
@@ -76,7 +85,7 @@ function parseFrontMatter(mdContent) {
             yamlLines.push(line);
         } else if (dashCount >= 2) {
             contentLines.push(line);
-        } else if (dashCount === 0 && line.trim() !== '---') {
+        } else if (dashCount === 0 && trimmedLine !== '---') {
             contentLines.push(line);
         }
     }
