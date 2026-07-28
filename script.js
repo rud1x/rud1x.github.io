@@ -1,54 +1,3 @@
-(function initGridBackground() {
-    const canvas = document.getElementById('bgCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animationId = null;
-    
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    
-    function drawGrid() {
-        if (!ctx) return;
-        const w = canvas.width, h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
-        ctx.lineWidth = 1;
-        const step = 50;
-        const offset = (Date.now() * 0.03) % step;
-        
-        for (let x = offset; x < w; x += step) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, h);
-            ctx.stroke();
-        }
-        for (let y = offset; y < h; y += step) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(w, y);
-            ctx.stroke();
-        }
-        animationId = requestAnimationFrame(drawGrid);
-    }
-    
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    drawGrid();
-})();
-
-function calculateAge(birthDate) {
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
-    return age;
-}
-const ageElement = document.getElementById('age');
-if (ageElement) ageElement.textContent = calculateAge('2012-02-10');
-
 const projectsData = [
     {
         id: 2,
@@ -124,72 +73,13 @@ const projectsData = [
     }
 ];
 
-function getCategoryName(category) {
-    const names = {
-        'discord': 'Discord',
-        'telegram': 'Telegram',
-        'code': 'Open Source'
+function getCategoryLabel(category) {
+    const labels = {
+        'telegram': 'telegram',
+        'discord': 'discord',
+        'code': 'open source'
     };
-    return names[category] || category;
-}
-
-function renderProjects(filter = 'all') {
-    const grid = document.getElementById('projectsGrid');
-    if (!grid) {
-        console.error('projectsGrid не найден');
-        return;
-    }
-    
-    const filtered = filter === 'all' 
-        ? projectsData 
-        : projectsData.filter(p => p.category === filter);
-    
-    if (filtered.length === 0) {
-        grid.innerHTML = '<div class="no-projects">✨ Проектов в этой категории пока нет</div>';
-        return;
-    }
-    
-    grid.innerHTML = filtered.map((project, index) => {
-        const imageHtml = project.image 
-            ? `<img src="${project.image}" alt="${project.title}" loading="lazy">`
-            : `<span style="font-size: 3rem;">${project.icon}</span>`;
-        
-        return `<div class="project-card" data-id="${project.id}" data-link="${project.link}" style="animation: fadeInUp 0.5s ease ${index * 0.05}s both">
-    <div class="project-img">
-        ${imageHtml}
-    </div>
-    <div class="project-info">
-        <h3>${escapeHtml(project.title)}</h3>
-        <p>${escapeHtml(project.description)}</p>
-        <span class="project-tag">${getCategoryName(project.category)}</span>
-    </div>
-</div>`;
-    }).join('');
-    
-    document.querySelectorAll('.project-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const link = card.dataset.link;
-            if (link) {
-                window.open(link, '_blank');
-            }
-        });
-        
-        const img = card.querySelector('.project-img img');
-        if (img) {
-            img.addEventListener('error', function() {
-                const projectId = card.dataset.id;
-                const project = projectsData.find(p => p.id == projectId);
-                if (project) {
-                    this.style.display = 'none';
-                    const fallbackDiv = document.createElement('span');
-                    fallbackDiv.style.fontSize = '3rem';
-                    fallbackDiv.textContent = project.icon;
-                    this.parentElement.appendChild(fallbackDiv);
-                }
-            });
-        }
-    });
+    return labels[category] || category;
 }
 
 function escapeHtml(str) {
@@ -202,307 +92,286 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const filter = btn.dataset.filter;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderProjects(filter);
-    });
-});
-
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const tabId = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
-    });
-});
-
-async function loadGitHubStats() {
-    const grid = document.getElementById('githubStatsGrid');
+function renderProjects(filter = 'all') {
+    const grid = document.getElementById('projectsGrid');
     if (!grid) return;
-    try {
-        const res = await fetch('https://raw.githubusercontent.com/rud1x/rud1x/main/cfg.json');
-        if (res.ok) {
-            const stats = await res.json();
-            grid.innerHTML = `
-                <div class="stat-card"><div class="stat-value">${stats.repos || 6}</div><div class="stat-label">Репозитории</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.stars || 0}</div><div class="stat-label">Звёзды</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.followers || 2}</div><div class="stat-label">Подписчики</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.totalCommits || 0}</div><div class="stat-label">Коммиты</div></div>
-            `;
-        } else {
-            throw new Error();
-        }
-    } catch {
-        grid.innerHTML = `<div class="stat-card" style="grid-column:1/-1"><div class="stat-value">—</div><div class="stat-label">Не удалось загрузить</div></div>`;
+
+    const filtered = filter === 'all' 
+        ? projectsData 
+        : projectsData.filter(p => p.category === filter);
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="no-projects">
+                ✨ Проектов в этой категории пока нет
+            </div>
+        `;
+        return;
     }
+
+    grid.innerHTML = filtered.map((project, index) => {
+        const imageHtml = project.image 
+            ? `<img src="${project.image}" alt="${project.title}" loading="lazy">`
+            : `<span class="project-placeholder">${project.icon}</span>`;
+        
+        return `
+            <div class="project-card" data-id="${project.id}" data-link="${project.link}" style="animation-delay: ${index * 0.06}s">
+                <div class="project-img">
+                    ${imageHtml}
+                </div>
+                <div class="project-info">
+                    <h3>${escapeHtml(project.title)}</h3>
+                    <p>${escapeHtml(project.description)}</p>
+                    <span class="project-tag">${getCategoryLabel(project.category)}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.querySelectorAll('.project-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const link = this.dataset.link;
+            if (link) window.open(link, '_blank');
+        });
+
+        const img = card.querySelector('.project-img img');
+        if (img) {
+            img.addEventListener('error', function() {
+                const projectId = card.dataset.id;
+                const project = projectsData.find(p => p.id == projectId);
+                if (project) {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('span');
+                    fallback.className = 'project-placeholder';
+                    fallback.textContent = project.icon;
+                    this.parentElement.appendChild(fallback);
+                }
+            });
+        }
+    });
 }
 
-async function loadCodewarsStats() {
-    const grid = document.getElementById('codewarsStatsGrid');
-    if (!grid) return;
+function getAge(birthDate) {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    return age;
+}
+
+function getDaysSince(date) {
+    const start = new Date(date);
+    const now = new Date();
+    const diffTime = Math.abs(now - start);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+function initTyping() {
+    const element = document.getElementById('typedText');
+    if (!element) return;
     
-    try {
-        const response = await fetch('https://www.codewars.com/api/v1/users/rud1x');
+    const phrases = [
+        'python разработчик',
+        'создаю ботов',
+        'open source энтузиаст',
+        'учусь каждый день'
+    ];
+    
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let isWaiting = false;
+    
+    function type() {
+        const currentPhrase = phrases[phraseIndex];
         
-        if (!response.ok) throw new Error('User not found');
-        
-        const data = await response.json();
-        
-        const rankColors = {
-            'white': '#cccccc',
-            'yellow': '#ffcc00',
-            'blue': '#4a90e2',
-            'purple': '#9b59b6',
-            'black': '#222222'
-        };
-        const rankColor = rankColors[data.ranks.overall.color] || '#ffffff';
-        
-        grid.innerHTML = `
-            <div class="stat-card"><div class="stat-value" style="color: ${rankColor}">${data.ranks.overall.name}</div><div class="stat-label">Ранг</div></div>
-            <div class="stat-card"><div class="stat-value">${data.honor || 0}</div><div class="stat-label">Очки чести</div></div>
-            <div class="stat-card"><div class="stat-value">${data.codeChallenges.totalCompleted || 0}</div><div class="stat-label">Решено задач</div></div>
-            <div class="stat-card"><div class="stat-value">${data.ranks.overall.score || 0}</div><div class="stat-label">Всего очков</div></div>
-        `;
-    } catch (error) {
-        console.error('Ошибка загрузки Codewars:', error);
-        grid.innerHTML = `
-            <div class="stat-card" style="grid-column:1/-1"><div class="stat-value">—</div><div class="stat-label">Не удалось загрузить</div></div>
-        `;
-    }
-}
-
-const contactBtn = document.getElementById('contactBtn');
-const contactDropdown = document.getElementById('contactDropdown');
-if (contactBtn && contactDropdown) {
-    contactBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        contactDropdown.classList.toggle('show');
-    });
-    document.addEventListener('click', (e) => {
-        if (!contactBtn.contains(e.target) && !contactDropdown.contains(e.target)) {
-            contactDropdown.classList.remove('show');
+        if (isDeleting) {
+            element.textContent = currentPhrase.substring(0, charIndex - 1);
+            charIndex--;
+        } else {
+            element.textContent = currentPhrase.substring(0, charIndex + 1);
+            charIndex++;
         }
-    });
+        
+        let speed = isDeleting ? 40 : 80;
+        
+        if (!isDeleting && charIndex === currentPhrase.length) {
+            speed = 2000;
+            isWaiting = true;
+            setTimeout(() => {
+                isWaiting = false;
+                isDeleting = true;
+                type();
+            }, speed);
+            return;
+        }
+        
+        if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            speed = 400;
+        }
+        
+        if (!isWaiting) {
+            setTimeout(type, speed);
+        }
+    }
+    
+    setTimeout(type, 500);
 }
 
 function setTheme(theme) {
     document.body.classList.remove('dark', 'light');
     document.body.classList.add(theme);
     localStorage.setItem('theme', theme);
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.theme === theme);
-    });
+    
+    const icon = document.querySelector('.floating i');
+    if (icon) {
+        icon.className = theme === 'dark' ? 'ph-fill ph-moon' : 'ph-fill ph-sun';
+    }
+    
     const canvas = document.getElementById('bgCanvas');
-    if (canvas) canvas.style.opacity = theme === 'dark' ? '0.15' : '0.08';
+    if (canvas) canvas.style.opacity = theme === 'dark' ? '0.12' : '0.06';
 }
 
-const savedTheme = localStorage.getItem('theme') || 'dark';
-setTheme(savedTheme);
-document.querySelectorAll('.theme-btn').forEach(btn => {
-    btn.addEventListener('click', () => setTheme(btn.dataset.theme));
-});
-
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-`;
-document.head.appendChild(style);
-
-document.addEventListener('DOMContentLoaded', () => {
-    renderProjects('all');
-    loadGitHubStats();
-    loadCodewarsStats();
-});
-
-
-const backToTopBtn = document.getElementById('backToTop');
-
-if (backToTopBtn) {
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 500) {
-            backToTopBtn.classList.add('show');
-        } else {
-            backToTopBtn.classList.remove('show');
-        }
-    });
+function initTheme() {
+    const saved = localStorage.getItem('theme') || 'dark';
+    setTheme(saved);
     
-    backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-}
-
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '20px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-document.querySelectorAll('.project-card, .skill-card, .stat-card, .timeline-item').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    observer.observe(el);
-});
-
-const heroContent = document.querySelector('.hero-content');
-if (heroContent) {
-    heroContent.style.opacity = '0';
-    heroContent.style.transform = 'translateY(20px)';
-    heroContent.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    setTimeout(() => {
-        heroContent.style.opacity = '1';
-        heroContent.style.transform = 'translateY(0)';
-    }, 100);
-}
-
-const cornerBtn = document.getElementById('cornerThemeBtn');
-
-function updateCornerBtnIcon() {
-    if (!cornerBtn) return;
-    const icon = cornerBtn.querySelector('i');
-    const isDark = document.body.classList.contains('dark');
-    if (isDark) {
-        icon.className = 'ph-fill ph-moon';
-    } else {
-        icon.className = 'ph-fill ph-sun';
-    }
-}
-
-if (cornerBtn) {
-    updateCornerBtnIcon();
-    
-    cornerBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
+    document.getElementById('themeBtn').addEventListener('click', function() {
         const isDark = document.body.classList.contains('dark');
-        const newTheme = isDark ? 'light' : 'dark';
-        
-        setTheme(newTheme);
-        updateCornerBtnIcon();
-        
-        this.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            if (cornerBtn) cornerBtn.style.transform = '';
-        }, 150);
+        setTheme(isDark ? 'light' : 'dark');
     });
 }
 
-const themeObserver = new MutationObserver(function() {
-    updateCornerBtnIcon();
-});
-themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+ 
+ 
+let currentTab = 'skills';
+let currentFilter = 'all';
 
-function initTypingAnimation() {
-    const heroTitle = document.querySelector('.hero-title');
-    if (!heroTitle) return;
+ 
+function switchTab(tabId) {
+ 
+    currentTab = tabId;
     
-    const cursorSpan = heroTitle.querySelector('.cursor');
-    if (!cursorSpan) return;
+ 
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
     
-    const firstLineText = "JUNIOR";
-    const secondLineText = "DEVELOPER";
+ 
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.toggle('active', content.id === tabId);
+    });
     
-    heroTitle.innerHTML = '';
-    
-
-    const firstLineSpan = document.createElement('span');
-    firstLineSpan.className = 'typing-line';
-    const breakSpan = document.createElement('br');
-    const secondLineSpan = document.createElement('span');
-    secondLineSpan.className = 'typing-line';
-    
-    heroTitle.appendChild(firstLineSpan);
-    heroTitle.appendChild(breakSpan);
-    heroTitle.appendChild(secondLineSpan);
-    heroTitle.appendChild(cursorSpan);
-    
-    let firstIndex = 0;
-    let secondIndex = 0;
-    
-    function typeFirstLine() {
-        if (firstIndex < firstLineText.length) {
-            firstLineSpan.textContent += firstLineText.charAt(firstIndex);
-            firstIndex++;
-            setTimeout(typeFirstLine, 100);
-        } else {
-            setTimeout(typeSecondLine, 200);
-        }
-    }
-    
-    function typeSecondLine() {
-        if (secondIndex < secondLineText.length) {
-            secondLineSpan.textContent += secondLineText.charAt(secondIndex);
-            secondIndex++;
-            setTimeout(typeSecondLine, 100);
-        }
-    }
-    
-    setTimeout(typeFirstLine, 300);
+ 
+    renderProjects(currentFilter);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    renderProjects('all');
-    loadGitHubStats();
-    loadCodewarsStats();
-    setTimeout(initTypingAnimation, 500);
+ 
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const tabId = this.dataset.tab;
+        switchTab(tabId);
+    });
 });
 
-function compactStickyHeader() {
-    if (window.innerWidth > 768) return;
+ 
+document.addEventListener('click', function(e) {
+    const filterBtn = e.target.closest('.filter-btn');
+    if (!filterBtn) return;
     
-    const headers = document.querySelectorAll('.section-header');
-    headers.forEach(header => {
-        header.style.padding = '0.2rem 0';
-        header.style.minHeight = 'auto';
-        header.style.lineHeight = '1.2';
-    });
+ 
+    const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab) return;
     
-    const titles = document.querySelectorAll('.section-title');
-    titles.forEach(title => {
-        title.style.padding = '0.1rem 0';
-        title.style.margin = '0';
-        title.style.fontSize = '0.7rem';
+ 
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
     });
-}
+    filterBtn.classList.add('active');
+    
+ 
+    currentFilter = filterBtn.dataset.filter;
+    renderProjects(currentFilter);
+});
 
-document.addEventListener('DOMContentLoaded', compactStickyHeader);
-window.addEventListener('resize', compactStickyHeader);
+ 
+document.addEventListener('DOMContentLoaded', function() {
+ 
+    currentFilter = 'all';
+    currentTab = 'skills';
+    
+ 
+    switchTab('skills');
+    
+ 
+    const ageEl = document.getElementById('age');
+    if (ageEl) ageEl.textContent = getAge('2012-02-10');
+    
+    const daysEl = document.getElementById('codingDays');
+    if (daysEl) daysEl.textContent = getDaysSince('2026-04-06');
+    
+    initTyping();
+    initTheme();
+    
+ 
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('section').forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = `opacity 0.6s ease ${i * 0.1}s, transform 0.6s ease ${i * 0.1}s`;
+        observer.observe(el);
+    });
+});
 
-function getDaysSince(dateString) {
-    const startDate = new Date(dateString);
-    const today = new Date();
-    const diffTime = Math.abs(today - startDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-}
-
-const daysElement = document.getElementById('codingDays');
-if (daysElement) {
-    const days = getDaysSince('2026-04-06');
-    daysElement.textContent = days;
-}
+ 
+(function initCanvas() {
+    const canvas = document.getElementById('bgCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    
+    function draw() {
+        if (!ctx) return;
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1;
+        const step = 55;
+        const offset = (Date.now() * 0.02) % step;
+        
+        for (let x = offset; x < w; x += step) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+            ctx.stroke();
+        }
+        for (let y = offset; y < h; y += step) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+            ctx.stroke();
+        }
+        requestAnimationFrame(draw);
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    draw();
+})();
