@@ -1038,6 +1038,8 @@ function initRadar() {
     observer.observe(block);
 })();
 
+<script data-goatcounter="https://rudix.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 /* ========================================
    РАДАР — инициализация при загрузке
    ======================================== */
