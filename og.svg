@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+    <defs>
+        <linearGradient id="bgGrad" x1="0" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#0a0a0a"/>
+            <stop offset="100%" stop-color="#050505"/>
+        </linearGradient>
+
+        <linearGradient id="nameGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#6b7280"/>
+        </linearGradient>
+
+        <radialGradient id="glowTop" cx="50%" cy="0%" r="70%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+        </radialGradient>
+
+        <radialGradient id="glowGreen" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#22c55e" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+        </radialGradient>
+
+        <pattern id="grid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1"/>
+        </pattern>
+    </defs>
+
+    <!-- Фон -->
+    <rect width="1200" height="630" fill="url(#bgGrad)"/>
+    <rect width="1200" height="630" fill="url(#grid)"/>
+    <ellipse cx="600" cy="0" rx="900" ry="500" fill="url(#glowTop)"/>
+
+    <!-- Мягкое зелёное свечение за именем -->
+    <ellipse cx="380" cy="330" rx="300" ry="180" fill="url(#glowGreen)"/>
+
+    <!-- Верхняя строка метаданных -->
+    <g transform="translate(80, 70)">
+        <text x="0" y="0" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="12" fill="#6b7280" letter-spacing="0.2em" text-transform="uppercase">ПОРТФОЛИО · 2026</text>
+        <line x1="0" y1="18" x2="220" y2="18" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+    </g>
+
+    <!-- Индикатор онлайн справа сверху (статичный) -->
+    <g transform="translate(1100, 70)">
+        <circle cx="0" cy="0" r="5" fill="#22c55e"/>
+        <circle cx="0" cy="0" r="9" fill="none" stroke="#22c55e" stroke-width="1" opacity="0.4"/>
+    </g>
+
+    <!-- Приветствие -->
+    <g transform="translate(80, 260)">
+        <text x="0" y="0" font-family="'Inter', -apple-system, sans-serif" font-weight="200" font-size="56" fill="rgba(255,255,255,0.18)" letter-spacing="-0.02em">привет, я</text>
+    </g>
+
+    <!-- Огромное имя -->
+    <g transform="translate(80, 400)">
+        <text x="0" y="0" font-family="'Inter', -apple-system, sans-serif" font-weight="900" font-size="180" fill="url(#nameGrad)" letter-spacing="-0.06em">rudix.</text>
+    </g>
+
+    <!-- Линия-разделитель -->
+    <line x1="80" y1="490" x2="1120" y2="490" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+    <!-- Нижний ряд: слева описание, справа домен -->
+    <g transform="translate(80, 540)">
+        <text x="0" y="0" font-family="'Inter', sans-serif" font-weight="500" font-size="20" fill="#9ca3af">Python-разработчик</text>
+        <text x="0" y="34" font-family="'Inter', sans-serif" font-weight="400" font-size="15" fill="#6b7280" letter-spacing="0.02em">telegram-боты · open source</text>
+    </g>
+
+    <g transform="translate(1120, 540)" text-anchor="end">
+        <text x="0" y="0" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9ca3af" letter-spacing="0.1em">rud1x.ru</text>
+        <text x="0" y="22" font-family="'JetBrains Mono', monospace" font-size="11" fill="#4b5563" letter-spacing="0.1em">2026</text>
+    </g>
+
+    <!-- Рамка по краю -->
+    <rect x="1" y="1" width="1198" height="628" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+</svg>

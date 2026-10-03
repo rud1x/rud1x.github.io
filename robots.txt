@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /cfg.json
+Disallow: /releases.json
+Disallow: /.github/
+Disallow: /README.md
+
+Sitemap: https://rud1x.ru/sitemap.xml

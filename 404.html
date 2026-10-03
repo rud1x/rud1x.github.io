@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 · страница не найдена</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
+            -webkit-mask-image: radial-gradient(circle at center, white 0%, transparent 70%);
+            mask-image: radial-gradient(circle at center, white 0%, transparent 70%);
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 620px;
+            width: 100%;
+        }
+
+        .code {
+            font-size: clamp(120px, 22vw, 220px);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -0.06em;
+            background: linear-gradient(180deg, #e5e5e5 0%, rgba(255,255,255,0.05) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 24px;
+        }
+
+        .label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #6b7280;
+            padding: 5px 14px;
+            border: 1px solid #222;
+            border-radius: 20px;
+            margin-bottom: 24px;
+        }
+
+        .label .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+
+        .desc {
+            font-size: 15px;
+            color: #9ca3af;
+            line-height: 1.6;
+            margin-bottom: 36px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 28px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #e5e5e5;
+            color: #0a0a0a;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            filter: brightness(0.92);
+            box-shadow: 0 16px 40px -8px rgba(0,0,0,0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #9ca3af;
+            border: 1.5px solid #222;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.03);
+            color: #e5e5e5;
+            border-color: #e5e5e5;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <div class="container">
+        <div class="code">404</div>
+
+        <div class="label">
+            <span class="dot"></span>
+            страница не найдена
+        </div>
+
+        <h1 class="title">здесь ничего нет</h1>
+        <p class="desc">
+            Возможно, страница была удалена, переименована или ты просто ошибся с адресом.
+        </p>
+
+        <div class="actions">
+            <a href="/" class="btn btn-primary">
+                <i class="ph-fill ph-house"></i>
+                на главную
+            </a>
+            <a href="/#projects" class="btn btn-outline">
+                <i class="ph-fill ph-rocket"></i>
+                к проектам
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -4,14 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>rudix · разработчик</title>
-    <link rel="icon" type="image/png" href="favicon.png" />
-    
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+    <meta name="description" content="Портфолио Михаила (rudix) — Python-разработчик, создатель Telegram-ботов и Open Source энтузиаст.">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="rudix · python разработчик">
+    <meta property="og:description" content="Python-разработчик. Создаю Telegram-ботов, инструменты для OSINT и автоматизации.">
+    <meta property="og:url" content="https://rud1x.ru/">
+    <meta property="og:image" content="https://rud1x.ru/og.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="rudix · python разработчик">
+    <meta name="twitter:description" content="Python-разработчик. Создаю Telegram-ботов, инструменты для OSINT и автоматизации.">
+    <meta name="twitter:image" content="https://rud1x.ru/og.png">
+
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.2"></script>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
-    
+
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -21,47 +35,70 @@
     <div class="container">
         <!-- ===== HERO ===== -->
         <section class="hero">
-            <div class="hero-content">
-                <h1 class="hero-title">
-                    <span class="hero-name">Михаил</span>
-                    <span class="hero-highlight">rudix</span>
-                </h1>
-                
-                <div class="hero-typed">
-                    <span class="typed-prefix">✦</span>
-                    <span class="typed-text" id="typedText"></span>
+            <div class="hero-3d-wrap">
+                <div class="hero-3d" id="heroCard">
+                    <div class="hero-3d-tag">
+                        <span class="hero-dot-online"></span>
+                        rudix · 2026
+                    </div>
+
+                    <h1 class="hero-3d-title">
+                        <span class="hero-3d-dim">привет, я</span><br>
+                        <span class="hero-3d-accent">rudix.</span>
+                    </h1>
+
+                    <p class="hero-3d-desc">
+                        Python-разработчик. Создаю Telegram-ботов, инструменты
+                        для OSINT и автоматизации. Всё выкладываю в open source.
+                    </p>
+
+                    <div class="hero-3d-stats">
+                        <div class="hero-3d-stat">
+                            <div class="hero-3d-stat-num" id="heroStatStars">97</div>
+                            <div class="hero-3d-stat-lbl">звёзд</div>
+                        </div>
+                        <div class="hero-3d-stat">
+                            <div class="hero-3d-stat-num" id="heroStatRepos">9</div>
+                            <div class="hero-3d-stat-lbl">репо</div>
+                        </div>
+                        <div class="hero-3d-stat">
+                            <div class="hero-3d-stat-num" id="heroStatCommits">276</div>
+                            <div class="hero-3d-stat-lbl">коммитов</div>
+                        </div>
+                        <div class="hero-3d-stat">
+                            <div class="hero-3d-stat-num" id="heroStatFollowers">11</div>
+                            <div class="hero-3d-stat-lbl">подписчиков</div>
+                        </div>
+                    </div>
+
+                    <div class="hero-3d-bottom">
+                        <div class="hero-3d-actions">
+                            <a href="#about" class="btn btn-primary">
+                                <i class="ph-fill ph-user"></i>
+                                обо мне
+                            </a>
+                            <a href="#projects" class="btn btn-outline">
+                                <i class="ph-fill ph-rocket"></i>
+                                проекты
+                            </a>
+                        </div>
+
+                        <div class="hero-3d-social">
+                            <a href="https://t.me/therudix" target="_blank" aria-label="Telegram">
+                                <i class="ph-fill ph-telegram-logo"></i>
+                            </a>
+                            <a href="https://github.com/rud1x" target="_blank" aria-label="GitHub">
+                                <i class="ph-fill ph-github-logo"></i>
+                            </a>
+                            <a href="mailto:timipav@yandex.ru" aria-label="Email">
+                                <i class="ph-fill ph-envelope"></i>
+                            </a>
+                            <a href="https://steamcommunity.com/id/rudix_001/" target="_blank" aria-label="Steam">
+                                <i class="ph-fill ph-steam-logo"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="hero-actions">
-                    <a href="#about" class="btn btn-primary">
-                        <i class="ph-fill ph-user"></i>
-                        обо мне
-                    </a>
-                    <a href="#projects" class="btn btn-outline">
-                        <i class="ph-fill ph-rocket"></i>
-                        проекты
-                    </a>
-                </div>
-                
-                <div class="hero-social">
-                    <a href="https://t.me/therudix" target="_blank" aria-label="Telegram">
-                        <i class="ph-fill ph-telegram-logo"></i>
-                    </a>
-                    <a href="https://github.com/rud1x" target="_blank" aria-label="GitHub">
-                        <i class="ph-fill ph-github-logo"></i>
-                    </a>
-                    <a href="mailto:timipav@yandex.ru" aria-label="Email">
-                        <i class="ph-fill ph-envelope"></i>
-                    </a>
-                    <a href="https://steamcommunity.com/id/rudix_001/" target="_blank" aria-label="Steam">
-                        <i class="ph-fill ph-steam-logo"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="hero-scroll">
-                <span>скролл</span>
-                <i class="ph-fill ph-caret-down"></i>
             </div>
         </section>
 
@@ -72,60 +109,163 @@
                 <h2 class="section-title">обо мне</h2>
                 <div class="section-line"></div>
             </div>
-            
-            <div class="about-grid">
+
+            <div class="about-content">
+                <div class="about-left" id="aboutAnim">
+                    <div class="about-num" id="aboutNum">0</div>
+                    <div class="about-caption" id="aboutCaption">лет</div>
+                </div>
+
                 <div class="about-text">
                     <p class="about-greeting">привет, я михаил 👋</p>
                     <p>
-                        Мне <strong id="age">14</strong> лет. <strong id="codingDays">0</strong> дней назад я твёрдо решил заняться программированием — и с тех пор не останавливаюсь. 
-                        Вообще познакомился с кодом в 7 лет, когда сверстал свой первый сайт для видео. Последний год я создавал проекты для себя как хобби. Но недавно решил, что хочу развиваться в этом направлении профессионально, и теперь активно учусь, создаю проекты и делюсь опытом в <a href="/blog/" class="about-blog-link">блоге</a>.
+                        <strong>Python-разработчик</strong>. Создаю <strong>Telegram-ботов</strong>, инструменты для <strong>OSINT</strong> и автоматизации. С кодом познакомился в 7 лет — сверстал первый сайт для видео. Последний год делал проекты как хобби, но <strong><span id="codingDays">0</span> дней назад</strong> решил развиваться в этом профессионально — теперь активно учусь и создаю новое.
                     </p>
                     <p>
-                        Мой основной язык — <strong>Python</strong>. Нравится за простоту и мощь одновременно. 
-                        Но сидеть в одной экосистеме не планирую — в планах <strong>Java</strong> (для серьёзных проектов) и что-то низкоуровневое типа <strong>C или Rust</strong>, чтобы понять, как всё работает под капотом.
-                    </p>
-                    <p>
-                        Я за <strong>Open Source</strong>. Почти всё, что делаю, выкладываю на GitHub — пусть лежит, вдруг кому-то пригодится или кто-то подскажет, как сделать лучше.
+                        Всё, что делаю, выкладываю в <strong>open source</strong> на GitHub. В планах <strong>Java</strong>, <strong>C</strong> и <strong>Rust</strong>. Ещё веду <a href="/blog/" class="about-blog-link">блог</a>, где рассказываю о проектах и делюсь опытом.
                     </p>
                 </div>
             </div>
         </section>
 
-        <!-- ===== НАВЫКИ ===== -->
+        <!-- ===== АРСЕНАЛ ===== -->
         <section class="skills" id="skills">
             <div class="section-header">
                 <span class="section-number">02</span>
-                <h2 class="section-title">навыки</h2>
+                <h2 class="section-title">арсенал</h2>
                 <div class="section-line"></div>
             </div>
-            
-            <div class="skills-tabs">
-                <button class="tab-btn active" data-tab="skills">навыки</button>
-                <button class="tab-btn" data-tab="tools">инструменты</button>
-            </div>
-            
-            <div id="skills" class="tab-content active">
-                <div class="skills-grid">
-                    <div class="skill-card"><i class="ph-fill ph-code"></i><span>Python</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-terminal"></i><span>Linux/Debian</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-telegram-logo"></i><span>Telegram API</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-brain"></i><span>Промт-инжиниринг</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-github-logo"></i><span>Git</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-browser"></i><span>HTML/CSS</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-database"></i><span>Базы данных (SQLite)</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-translate"></i><span>Английский язык</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-chart-line"></i><span>Аналитика</span></div>
+
+            <div class="arsenal-block">
+                <div class="arsenal-label">
+                    <i class="ph-fill ph-sword"></i>
+                    <span>навыки</span>
+                </div>
+
+                <div class="radar-wrap">
+                    <div class="radar-container">
+                        <svg class="radar-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                            <g class="radar-grid" stroke="currentColor" fill="none" stroke-width="1">
+                                <circle cx="200" cy="200" r="40" />
+                                <circle cx="200" cy="200" r="80" />
+                                <circle cx="200" cy="200" r="120" />
+                                <circle cx="200" cy="200" r="160" />
+                            </g>
+
+                            <g class="radar-axes" stroke="currentColor" stroke-width="1">
+                                <line x1="200" y1="200" x2="200" y2="40" />
+                                <line x1="200" y1="200" x2="352" y2="120" />
+                                <line x1="200" y1="200" x2="296" y2="336" />
+                                <line x1="200" y1="200" x2="104" y2="336" />
+                                <line x1="200" y1="200" x2="48" y2="120" />
+                            </g>
+
+                            <polygon
+                                class="radar-polygon"
+                                id="radarPolygon"
+                                points=""
+                                fill="url(#radarGradient)"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linejoin="round"
+                            />
+
+                            <g id="radarPoints" class="radar-points"></g>
+
+                            <g class="radar-labels" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700" text-anchor="middle">
+                                <text x="200" y="25" data-axis="0">Python</text>
+                                <text x="375" y="110" data-axis="1">Bots</text>
+                                <text x="310" y="360" data-axis="2">Frontend</text>
+                                <text x="90" y="360" data-axis="3">Tools</text>
+                                <text x="25" y="110" data-axis="4">Soft</text>
+                            </g>
+
+                            <defs>
+                                <radialGradient id="radarGradient" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="rgba(255,255,255,0.25)" />
+                                    <stop offset="100%" stop-color="rgba(255,255,255,0.08)" />
+                                </radialGradient>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <div class="radar-details" id="radarDetails">
+                        <div class="radar-tabs" id="radarTabs"></div>
+                        <div class="radar-list" id="radarList"></div>
+                    </div>
                 </div>
             </div>
-            
-            <div id="tools" class="tab-content">
-                <div class="skills-grid">
-                    <div class="skill-card"><i class="ph-fill ph-code"></i><span>VS Code</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-github-logo"></i><span>GitHub</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-terminal"></i><span>Terminal</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-coin"></i><span>FunPay</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-grains"></i><span>ASF</span></div>
-                    <div class="skill-card"><i class="ph-fill ph-linux-logo"></i><span>Arch Linux</span></div>
+
+            <div class="arsenal-block">
+                <div class="arsenal-label">
+                    <i class="ph-fill ph-wrench"></i>
+                    <span>инструменты</span>
+                </div>
+
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="ph-fill ph-code"></i></div>
+                        <div class="tool-info">
+                            <h4>VS Code</h4>
+                            <p>Основной редактор</p>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="ph-fill ph-github-logo"></i></div>
+                        <div class="tool-info">
+                            <h4>GitHub</h4>
+                            <p>Хостинг кода и Open Source</p>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="ph-fill ph-git-branch"></i></div>
+                        <div class="tool-info">
+                            <h4>Git</h4>
+                            <p>Контроль версий</p>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="ph-fill ph-terminal"></i></div>
+                        <div class="tool-info">
+                            <h4>Terminal</h4>
+                            <p>Ежедневная работа</p>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="ph-fill ph-linux-logo"></i></div>
+                        <div class="tool-info">
+                            <h4>Arch Linux</h4>
+                            <p>Основная ОС</p>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="ph-fill ph-terminal-window"></i></div>
+                        <div class="tool-info">
+                            <h4>Debian</h4>
+                            <p>Серверная ОС</p>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="ph-fill ph-coin"></i></div>
+                        <div class="tool-info">
+                            <h4>FunPay</h4>
+                            <p>Площадка для продаж</p>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="ph-fill ph-grains"></i></div>
+                        <div class="tool-info">
+                            <h4>ASF</h4>
+                            <p>Автоматизация Steam</p>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="ph-fill ph-database"></i></div>
+                        <div class="tool-info">
+                            <h4>SQLite</h4>
+                            <p>Лёгкая БД для ботов</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -137,104 +277,42 @@
                 <h2 class="section-title">проекты</h2>
                 <div class="section-line"></div>
             </div>
-            
-            <div class="projects-filter">
-                <button class="filter-btn active" data-filter="all">все</button>
-                <button class="filter-btn" data-filter="telegram">telegram</button>
-                <button class="filter-btn" data-filter="discord">discord</button>
-                <button class="filter-btn" data-filter="code">open source</button>
+
+            <div class="projects-toolbar">
+                <div class="projects-filter">
+                    <button class="filter-btn active" data-filter="all">все</button>
+                    <button class="filter-btn" data-filter="telegram">telegram</button>
+                    <button class="filter-btn" data-filter="discord">discord</button>
+                    <button class="filter-btn" data-filter="code">open source</button>
+                </div>
+                <div class="projects-sort">
+                    <button class="sort-btn active" data-sort="new" title="Сначала новые">
+                        <i class="ph-fill ph-calendar"></i>
+                        <span>новые</span>
+                    </button>
+                    <button class="sort-btn" data-sort="popular" title="Сначала популярные">
+                        <i class="ph-fill ph-fire"></i>
+                        <span>популярные</span>
+                    </button>
+                    <button class="sort-btn" data-sort="alpha" title="По алфавиту">
+                        <i class="ph-fill ph-sort-ascending"></i>
+                        <span>а-я</span>
+                    </button>
+                </div>
             </div>
-            
+
             <div class="projects-grid" id="projectsGrid"></div>
         </section>
 
-        <!-- ===== КАРЬЕРА (ТАЙМЛАЙН) ===== -->
+        <!-- ===== ИСТОРИЯ ОБНОВЛЕНИЙ ===== -->
         <section class="career" id="career">
             <div class="section-header">
                 <span class="section-number">04</span>
-                <h2 class="section-title">карьера</h2>
+                <h2 class="section-title">история обновлений</h2>
                 <div class="section-line"></div>
             </div>
-            
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-year">2019</span>
-                        <h3>Начало пути</h3>
-                        <p>Сверстал первый сайт для своих видео в 7 лет</p>
-                        <div class="timeline-tags">
-                            <span class="tag">Html5</span>
-                            <span class="tag">CSS3</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-year">2023</span>
-                        <h3>Discord разработка</h3>
-                        <p>Создание простых Discord ботов на Python</p>
-                        <div class="timeline-tags">
-                            <span class="tag">Python</span>
-                            <span class="tag">Discord.py</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-year">2024</span>
-                        <h3>Серийчик Бот</h3>
-                        <p>Запуск игрового Telegram бота с экономикой</p>
-                        <div class="timeline-tags">
-                            <span class="tag">aiogram</span>
-                            <span class="tag">Python</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-year">2024</span>
-                        <h3>Open Source</h3>
-                        <p>Первый Open Source проект — HuroBot для OSINT</p>
-                        <div class="timeline-tags">
-                            <span class="tag">GitHub</span>
-                            <span class="tag">OSINT</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-year">2026</span>
-                        <h3>Новые горизонты</h3>
-                        <p>Создание uHunt, wexos и начало обучения</p>
-                        <div class="timeline-tags">
-                            <span class="tag">Frontend</span>
-                            <span class="tag">Userbot</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-year">2026+</span>
-                        <h3>Цели и мечты</h3>
-                        <p>Изучение Java, создание стартапа, вклад в Open Source</p>
-                        <div class="timeline-tags">
-                            <span class="tag">Java</span>
-                            <span class="tag">Стартап</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            <div class="career-content" id="careerContent"></div>
         </section>
 
         <!-- ===== ФУТЕР ===== -->
@@ -249,10 +327,18 @@
         </footer>
     </div>
 
-    <!-- ===== КНОПКА ТЕМЫ ===== -->
     <button class="theme-btn floating" id="themeBtn" aria-label="Тема">
         <i class="ph-fill ph-moon"></i>
     </button>
+
+    <div class="project-modal" id="projectModal">
+        <div class="project-modal-inner">
+            <button class="modal-close" aria-label="Закрыть">
+                <i class="ph-fill ph-x"></i>
+            </button>
+            <div class="project-modal-content" id="projectModalContent"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
